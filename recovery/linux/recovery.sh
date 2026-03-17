@@ -57,9 +57,10 @@ while true; do
         4)
             read -rp "Source device (e.g. /dev/sda): " src
             read -rp "Output image name: " img
-            echo -e "${CYAN}Creating compressed image...${RESET}"
-            sudo dd if="$src" bs=4M status=progress | gzip -9 > "$HOME/tools/recovery/${img}.img.gz"
-            echo -e "${GREEN}Image saved: ~/tools/recovery/${img}.img.gz${RESET}"
+            IMG_DIR="$HOME/recovery/linux/images"
+            mkdir -p "$IMG_DIR"
+            sudo dd if="$src" bs=4M status=progress | gzip -9 > "${IMG_DIR}/${img}.img.gz"
+            echo -e "${GREEN}Image saved: ${IMG_DIR}/${img}.img.gz${RESET}"
             ;;
         5)
             read -rp "Image file (.img.gz): " img

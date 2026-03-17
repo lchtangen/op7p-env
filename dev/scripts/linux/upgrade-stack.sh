@@ -89,9 +89,18 @@ upgrade_python() {
 # ─── Dev tools via apt ────────────────────────────────────────────────────────
 upgrade_apt_tools() {
     log "System packages (apt)"
-    sudo apt update -qq 2>&1 | tail -2
-    sudo apt upgrade -y 2>&1 | tail -5
-    ok "System packages upgraded"
+    # NOTE: sudo is not available in the Ubuntu chroot (CapEff=0).
+    # This function is only effective when run as root (e.g. via Termux su + root-enter.sh)
+    if [ "$(id -u)" = "0" ]; then
+        apt update -qq 2>&1 | tail -2
+        apt upgrade -y 2>&1 | tail -5
+        ok "System packages upgraded"
+    else
+        warn "apt upgrade skipped — no root in chroot"
+        warn "To upgrade system packages, run from Termux:"
+        warn "  su -c \"bash /storage/emulated/0/dev/scripts/android/root-enter.sh\""
+        warn "  then inside root chroot: apt update && apt upgrade -y"
+    fi
 }
 
 # ─── Helm ─────────────────────────────────────────────────────────────────────

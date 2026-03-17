@@ -28,14 +28,23 @@ export BACKUPS="$HOME/backups"
 # ── AI agents ─────────────────────────────────────────────────────────────────
 alias review='bash $AI_HOME/agents/ai-review.sh'
 alias explain='bash $AI_HOME/agents/ai-explain.sh'
+alias ai-chat='bash $AI_HOME/agents/ai-chat.sh'
+alias ai-commit='bash $AI_HOME/agents/ai-commit.sh'
+alias ai-fix='bash $AI_HOME/agents/ai-fix.sh'
+alias ai-code='bash $AI_HOME/agents/ai-chat.sh code'
 
 # ── Dev scripts ───────────────────────────────────────────────────────────────
 alias sysinfo='bash $DEV/scripts/linux/sysinfo.sh'
 alias git-setup='bash $DEV/scripts/linux/git-setup.sh'
-alias bootable='sudo bash $RECOVERY/bootable/scripts/ventoy-install.sh'
+alias bootable='bash $RECOVERY/bootable/scripts/ventoy-install.sh'
 alias perf-status='bash $DEV/scripts/linux/perf-tune.sh --status'
-alias perf-tune='sudo bash $DEV/scripts/linux/perf-tune.sh'
+alias perf-tune='bash $DEV/scripts/linux/perf-tune.sh'
 alias upgrade='bash $DEV/scripts/linux/upgrade-stack.sh'
+alias env-check='bash $DEV/scripts/linux/env-check.sh'
+alias mcp-setup='bash $DEV/scripts/linux/mcp-setup.sh'
+alias vnc1080='bash $DEV/scripts/linux/vnc-desktop.sh start'
+alias vncstop='bash $DEV/scripts/linux/vnc-desktop.sh stop'
+alias vnc-status='bash $DEV/scripts/linux/vnc-desktop.sh status'
 
 # ── Navigation alias overrides (fixes /etc/zsh/zshrc.local capitalisation) ───
 # TODO: apply fix-zshrc-aliases.sh from Termux, then remove this block
@@ -60,7 +69,9 @@ echo "  Ubuntu 24.04 ARM64 · OnePlus 7 Pro GM1913 · ltangen"
 echo "  ─────────────────────────────────────────────────────"
 echo "  vnc1080 / vncstop     VNC desktop (port 5901)"
 echo "  ta                    tmux attach/new"
-echo "  ai-code / ai-chat     Ollama models"
+echo "  ai-chat / ai-code     Ollama interactive chat"
+echo "  ai-commit / ai-fix    AI git + code tools"
 echo "  cc / ccc              Claude Code"
+echo "  env-check             validate environment"
 echo "  proj / ai / dev       quick navigate"
 echo ""
