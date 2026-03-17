@@ -26,8 +26,13 @@ export DOCS="$HOME/docs"
 export BACKUPS="$HOME/backups"
 
 # ── AI agents ─────────────────────────────────────────────────────────────────
+alias ai-chat='bash $AI_HOME/agents/ai-chat.sh'
 alias review='bash $AI_HOME/agents/ai-review.sh'
 alias explain='bash $AI_HOME/agents/ai-explain.sh'
+alias ai-commit='bash $AI_HOME/agents/ai-commit.sh'
+alias ai-debug='bash $AI_HOME/agents/ai-debug.sh'
+alias ai-docs='bash $AI_HOME/agents/ai-docs.sh'
+alias ai-refactor='bash $AI_HOME/agents/ai-refactor.sh'
 
 # ── Dev scripts ───────────────────────────────────────────────────────────────
 alias sysinfo='bash $DEV/scripts/linux/sysinfo.sh'
@@ -36,6 +41,7 @@ alias bootable='sudo bash $RECOVERY/bootable/scripts/ventoy-install.sh'
 alias perf-status='bash $DEV/scripts/linux/perf-tune.sh --status'
 alias perf-tune='sudo bash $DEV/scripts/linux/perf-tune.sh'
 alias upgrade='bash $DEV/scripts/linux/upgrade-stack.sh'
+alias ai-stack='bash $DEV/scripts/linux/ai-stack.sh'
 
 # ── Navigation alias overrides (fixes /etc/zsh/zshrc.local capitalisation) ───
 # TODO: apply fix-zshrc-aliases.sh from Termux, then remove this block
@@ -60,7 +66,9 @@ echo "  Ubuntu 24.04 ARM64 · OnePlus 7 Pro GM1913 · ltangen"
 echo "  ─────────────────────────────────────────────────────"
 echo "  vnc1080 / vncstop     VNC desktop (port 5901)"
 echo "  ta                    tmux attach/new"
-echo "  ai-code / ai-chat     Ollama models"
+echo "  ai-chat / ai-code     Ollama models"
+echo "  ai-commit / ai-debug  AI git & debug agents"
 echo "  cc / ccc              Claude Code"
 echo "  proj / ai / dev       quick navigate"
+echo "  ai-stack --status     AI stack overview"
 echo ""

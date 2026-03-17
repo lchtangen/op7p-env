@@ -1,7 +1,7 @@
 #!/bin/bash
 # upgrade-stack.sh — Upgrade all dev components to latest versions
-# Go, Rust, Node, Python tools, Docker, Helm, k9s, Terraform, Ollama
-# Usage: bash upgrade-stack.sh [--check|--all|--go|--rust|--tools]
+# Go, Rust, Node, Python tools, Docker, Helm, k9s, Terraform, Ollama, kubectl
+# Usage: bash upgrade-stack.sh [--check|--all|--go|--rust|--node|--tools|--python|--k8s]
 
 set -uo pipefail
 BOLD=$'\033[1m'; CYAN=$'\033[0;36m'; GREEN=$'\033[0;32m'
@@ -24,7 +24,7 @@ check_versions() {
     info "Python:    $(python3 --version 2>/dev/null)"
     info "Ollama:    $(ollama --version 2>/dev/null)"
     info "Docker:    $(docker --version 2>/dev/null)"
-    info "kubectl:   $(kubectl version --client -o json 2>/dev/null | python3 -c 'import sys,json; print(json.load(sys.stdin)[\"clientVersion\"][\"gitVersion\"])' 2>/dev/null)"
+    info "kubectl:   $(kubectl version --client -o json 2>/dev/null | python3 -c 'import sys,json; print(json.load(sys.stdin)["clientVersion"]["gitVersion"])' 2>/dev/null)"
     info "Helm:      $(helm version --short 2>/dev/null)"
     info "Terraform: $(terraform version 2>/dev/null | head -1)"
     info "k9s:       $(k9s version 2>/dev/null | head -1)"
@@ -45,6 +45,7 @@ upgrade_go() {
     local tarball="/tmp/${LATEST}.linux-arm64.tar.gz"
     curl -fsSL "https://go.dev/dl/${LATEST}.linux-arm64.tar.gz" -o "$tarball"
     rm -rf ~/.local/lib/go
+    mkdir -p ~/.local/lib
     tar -xzf "$tarball" -C ~/.local/lib/
     ok "Go upgraded: $(~/.local/lib/go/bin/go version)"
     rm -f "$tarball"
@@ -77,11 +78,12 @@ upgrade_python() {
     log "Python pip tools"
     pip3 install --upgrade pip setuptools wheel 2>&1 | tail -3
     pip3 install --upgrade \
-        anthropic openai langchain langchain-community \
+        anthropic openai langchain langchain-community langchain-ollama \
         fastapi uvicorn httpx \
         jupyterlab huggingface_hub \
         ruff black isort mypy \
         rich typer click \
+        litellm \
         2>&1 | tail -5
     ok "Core Python packages upgraded"
 }
@@ -94,10 +96,39 @@ upgrade_apt_tools() {
     ok "System packages upgraded"
 }
 
+# ─── kubectl ──────────────────────────────────────────────────────────────────
+upgrade_kubectl() {
+    log "kubectl"
+    LATEST=$(curl -fsSL https://dl.k8s.io/release/stable.txt 2>/dev/null)
+    info "Latest: $LATEST"
+    local url="https://dl.k8s.io/release/${LATEST}/bin/linux/arm64/kubectl"
+    curl -fsSL "$url" -o /tmp/kubectl
+    install -m 0755 /tmp/kubectl /usr/local/bin/kubectl 2>/dev/null \
+        || { mkdir -p ~/.local/bin; install -m 0755 /tmp/kubectl ~/.local/bin/kubectl; }
+    rm -f /tmp/kubectl
+    ok "kubectl: $(kubectl version --client --short 2>/dev/null)"
+}
+
+# ─── Terraform ────────────────────────────────────────────────────────────────
+upgrade_terraform() {
+    log "Terraform"
+    LATEST=$(curl -fsSL https://api.github.com/repos/hashicorp/terraform/releases/latest 2>/dev/null \
+        | python3 -c "import sys,json; print(json.load(sys.stdin)['tag_name'].lstrip('v'))" 2>/dev/null)
+    info "Latest: v$LATEST"
+    local url="https://releases.hashicorp.com/terraform/${LATEST}/terraform_${LATEST}_linux_arm64.zip"
+    curl -fsSL "$url" -o /tmp/terraform.zip
+    unzip -o /tmp/terraform.zip -d /tmp/terraform-bin >/dev/null
+    install -m 0755 /tmp/terraform-bin/terraform /usr/local/bin/terraform 2>/dev/null \
+        || { mkdir -p ~/.local/bin; install -m 0755 /tmp/terraform-bin/terraform ~/.local/bin/terraform; }
+    rm -rf /tmp/terraform.zip /tmp/terraform-bin
+    ok "Terraform: $(terraform version 2>/dev/null | head -1)"
+}
+
 # ─── Helm ─────────────────────────────────────────────────────────────────────
 upgrade_helm() {
     log "Helm"
-    LATEST=$(curl -fsSL https://api.github.com/repos/helm/helm/releases/latest 2>/dev/null | python3 -c "import sys,json; print(json.load(sys.stdin)['tag_name'])")
+    LATEST=$(curl -fsSL https://api.github.com/repos/helm/helm/releases/latest 2>/dev/null \
+        | python3 -c "import sys,json; print(json.load(sys.stdin)['tag_name'])")
     CURRENT=$(helm version --short 2>/dev/null | cut -d+ -f1 | tr -d 'v')
     info "Current: v$CURRENT | Latest: $LATEST"
     curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash 2>&1 | tail -3
@@ -107,7 +138,8 @@ upgrade_helm() {
 # ─── k9s ──────────────────────────────────────────────────────────────────────
 upgrade_k9s() {
     log "k9s"
-    LATEST=$(curl -fsSL https://api.github.com/repos/derailed/k9s/releases/latest 2>/dev/null | python3 -c "import sys,json; print(json.load(sys.stdin)['tag_name'])")
+    LATEST=$(curl -fsSL https://api.github.com/repos/derailed/k9s/releases/latest 2>/dev/null \
+        | python3 -c "import sys,json; print(json.load(sys.stdin)['tag_name'])")
     info "Latest: $LATEST"
     local url="https://github.com/derailed/k9s/releases/download/${LATEST}/k9s_Linux_arm64.tar.gz"
     mkdir -p ~/.local/bin
@@ -118,7 +150,8 @@ upgrade_k9s() {
 # ─── lazygit ──────────────────────────────────────────────────────────────────
 upgrade_lazygit() {
     log "lazygit"
-    LATEST=$(curl -fsSL https://api.github.com/repos/jesseduffield/lazygit/releases/latest 2>/dev/null | python3 -c "import sys,json; print(json.load(sys.stdin)['tag_name'].lstrip('v'))")
+    LATEST=$(curl -fsSL https://api.github.com/repos/jesseduffield/lazygit/releases/latest 2>/dev/null \
+        | python3 -c "import sys,json; print(json.load(sys.stdin)['tag_name'].lstrip('v'))")
     info "Latest: $LATEST"
     local url="https://github.com/jesseduffield/lazygit/releases/download/v${LATEST}/lazygit_${LATEST}_Linux_arm64.tar.gz"
     mkdir -p ~/.local/bin
@@ -133,13 +166,22 @@ case "$MODE" in
     --all)
         upgrade_go
         upgrade_rust
+        upgrade_node
         upgrade_python
         ;;
-    --go)    upgrade_go ;;
-    --rust)  upgrade_rust ;;
-    --node)  upgrade_node ;;
-    --tools) upgrade_apt_tools; upgrade_helm; upgrade_k9s; upgrade_lazygit ;;
-    --python) upgrade_python ;;
+    --go)        upgrade_go ;;
+    --rust)      upgrade_rust ;;
+    --node)      upgrade_node ;;
+    --tools)     upgrade_apt_tools; upgrade_helm; upgrade_k9s; upgrade_lazygit ;;
+    --python)    upgrade_python ;;
+    --k8s)       upgrade_kubectl; upgrade_helm; upgrade_k9s; upgrade_terraform ;;
+    --kubectl)   upgrade_kubectl ;;
+    --terraform) upgrade_terraform ;;
+    *)
+        warn "Unknown mode: $MODE"
+        info "Usage: upgrade-stack.sh [--check|--all|--go|--rust|--node|--python|--tools|--k8s|--kubectl|--terraform]"
+        exit 1
+        ;;
 esac
 
 echo -e "\n${GREEN}${BOLD}Upgrade complete.${RESET}"

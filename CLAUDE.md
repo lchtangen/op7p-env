@@ -99,7 +99,16 @@ su -c "bash /storage/emulated/0/dev/scripts/android/fix-zshrc-aliases.sh"
 | `ta` | tmux attach or new session |
 | `lg` | lazygit |
 | `ai-code` | `ollama run qwen2.5-coder:7b` |
-| `ai-chat` | `ollama run llama3.2:3b` |
+| `ai-chat` | `bash ~/ai/agents/ai-chat.sh` |
+| `review` | `bash ~/ai/agents/ai-review.sh` |
+| `explain` | `bash ~/ai/agents/ai-explain.sh` |
+| `ai-commit` | `bash ~/ai/agents/ai-commit.sh` |
+| `ai-debug` | `bash ~/ai/agents/ai-debug.sh` |
+| `ai-docs` | `bash ~/ai/agents/ai-docs.sh` |
+| `ai-refactor` | `bash ~/ai/agents/ai-refactor.sh` |
+| `sysinfo` | `bash ~/dev/scripts/linux/sysinfo.sh` |
+| `upgrade` | `bash ~/dev/scripts/linux/upgrade-stack.sh` |
+| `jlab` | JupyterLab on port 8888 |
 
 ---
 
@@ -110,6 +119,40 @@ su -c "bash /storage/emulated/0/dev/scripts/android/fix-zshrc-aliases.sh"
 | Ollama | 127.0.0.1:11434 |
 | Redis | 127.0.0.1:6379 |
 | Docker | dockerd (VFS) |
+
+---
+
+## AI Stack
+
+| Component | Path | Notes |
+|-----------|------|-------|
+| Ollama server | `ollama serve` | API at :11434 |
+| AI agents | `~/ai/agents/*.sh` | Shell wrappers for Ollama |
+| Python LangChain | pip3 | `langchain-ollama` for native integration |
+| LiteLLM | pip3 | Unified API: Ollama + Claude + OpenAI |
+| JupyterLab | pip3 | `jlab` alias |
+| ai-stack.sh | `~/dev/scripts/linux/ai-stack.sh` | Stack manager |
+
+---
+
+## Scripts Reference
+
+| Script | Purpose | Root? |
+|--------|---------|-------|
+| `dev/scripts/linux/bootstrap.sh` | Full environment bootstrap | No |
+| `dev/scripts/linux/upgrade-stack.sh` | Upgrade all tools | No |
+| `dev/scripts/linux/ai-stack.sh` | AI stack management | No |
+| `dev/scripts/linux/ollama-config.sh` | Ollama optimization | Root for systemd |
+| `dev/scripts/linux/perf-tune.sh` | Linux kernel config files | Root |
+| `dev/scripts/linux/docker-optimize.sh` | Docker overlay2 | Root |
+| `dev/scripts/linux/k3s-install.sh` | Kubernetes (k3s) | No |
+| `dev/scripts/linux/git-setup.sh` | GitHub CLI + SSH setup | No |
+| `dev/scripts/linux/sysinfo.sh` | System snapshot | No |
+| `dev/scripts/linux/cleanup.sh` | Free disk space | No |
+| `dev/scripts/android/perf-tune-android.sh` | SM8150 tuning (Termux root) | Yes |
+| `dev/scripts/android/root-enter.sh` | Enter chroot as root | Yes |
+| `dev/scripts/android/fix-zshrc-aliases.sh` | Fix zshrc.local paths | Yes |
+| `dev/scripts/android/termux-setup.sh` | Termux bootstrap | No |
 
 ---
 
@@ -127,4 +170,6 @@ No root needed:
 ```bash
 gh auth login
 gh repo clone lchtangen/samplemind-ai ~/projects/samplemind-ai
+ollama pull llama3.1:8b
+bash ~/dev/scripts/linux/ai-stack.sh --pull-essential
 ```

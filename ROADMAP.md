@@ -74,7 +74,7 @@ su -c "bash /storage/emulated/0/dev/scripts/android/perf-tune-android.sh --balan
 | Docker overlay2 storage | 🔒 | `docker-optimize.sh` — needs root |
 | GitHub CLI (gh) 2.88.1 installed | ✅ | Needs `gh auth login` to authenticate |
 | SampleMind repo cloned | ⏳ | `gh repo clone lchtangen/samplemind-ai ~/projects/` |
-| JupyterLab configured | 📋 | For AI/ML notebook work |
+| JupyterLab configured | ✅ | Installed — `jlab` alias launches it |
 | Zram with zstd compression | 🔒 | Requires custom kernel (zstd not in 4.14-perf+) |
 
 ---
@@ -101,16 +101,21 @@ Guide: `~/docs/android/kernel-custom.md`
 
 ---
 
-## Phase 5 — AI & Development Platform 📋
+## Phase 5 — AI & Development Platform 🔄
 
 | Item | Status | Notes |
 |------|--------|-------|
 | Ollama optimized for SM8150 | 🔄 | Config written, systemd patch needs root |
 | anthropic / openai Python packages | ✅ | Installed via pip3 |
-| langchain + fastapi + uvicorn | ✅ | |
+| langchain + langchain-ollama | ✅ | `langchain-ollama` for native Ollama integration |
+| fastapi + uvicorn | ✅ | REST API framework |
+| litellm | ✅ | Unified API: Ollama + Claude + OpenAI |
 | Hugging Face hub | ✅ | |
-| JupyterLab | ✅ | Installed, not configured for persistent launch |
+| JupyterLab | ✅ | `jlab` alias, notebooks in `~/ai/notebooks/` |
 | Claude Code (claude CLI) | ✅ | `cc` alias |
+| AI agents (chat, review, explain) | ✅ | `~/ai/agents/` — all core agents |
+| AI agents (commit, debug, docs, refactor) | ✅ | New agents added |
+| ai-stack.sh management script | ✅ | Full AI stack start/stop/bench/models |
 | SampleMind AI engine | 📋 | Hermes + OpenVINO (ARM64 build needed) |
 | SampleMind frontend (Next.js + Tauri) | 📋 | Repo clone + build |
 | OpenVINO ARM64 build | 📋 | Intel OpenVINO for ARM — experimental |
@@ -140,6 +145,20 @@ Guide: `~/docs/android/kernel-custom.md`
 | ThinkPad X1 Carbon G8 (WSL2 + Win11) | 📋 | Docs: `docs/windows/thinkpad-wsl2-setup.md` |
 | Bootable USB (Ventoy, all PCs) | 📋 | Phase 6 |
 | ARM64 cross-compile toolchain | 📋 | Docs: `docs/arm64/README.md` |
+| Cross-distro bootstrap compatibility | ✅ | `dev/scripts/linux/bootstrap.sh` |
+
+---
+
+## Phase 8 — Termux & Android Integration ✅
+
+| Item | Status | Notes |
+|------|--------|-------|
+| Termux setup script | ✅ | `dev/scripts/android/termux-setup.sh` |
+| Ubuntu chroot launcher (user) | ✅ | `proot-distro login ubuntu` |
+| Ubuntu chroot launcher (root) | ✅ | `dev/scripts/android/root-enter.sh` |
+| fix-zshrc-aliases.sh | ✅ | Fixes capitalized paths in zshrc.local |
+| SSH server for Termux | ✅ | Configured in `termux-setup.sh --ssh` |
+| perf-tune-android.sh | ✅ | Full SM8150 tuning from Termux root |
 
 ---
 
@@ -156,20 +175,27 @@ su -c "bash /storage/emulated/0/dev/scripts/linux/docker-optimize.sh"
 
 # 3. Apply Ollama CPU affinity
 su -c "bash /storage/emulated/0/dev/scripts/linux/ollama-config.sh --apply"
+
+# 4. Fix zshrc.local aliases (remove ~/.zshrc override block after)
+su -c "bash /storage/emulated/0/dev/scripts/android/fix-zshrc-aliases.sh"
 ```
 
 Then from Ubuntu chroot (no root needed):
 ```bash
-# 4. Authenticate GitHub CLI (already installed)
+# 5. Authenticate GitHub CLI (already installed)
 gh auth login
 
-# 5. Clone SampleMind repo
+# 6. Clone SampleMind repo
 gh repo clone lchtangen/samplemind-ai ~/projects/samplemind-ai
 
-# 6. First nvim launch — install plugins
+# 7. Pull additional AI models
+ollama pull llama3.1:8b
+ollama pull gemma3:4b
+
+# 8. First nvim launch — install plugins
 nvim +":Lazy sync" +qa
 
-# 7. Install TPM plugins in tmux
+# 9. Install TPM plugins in tmux
 # Open tmux → Ctrl+a + I
 ```
 
