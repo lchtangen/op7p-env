@@ -80,6 +80,7 @@ ollama pull nomic-embed-text    # embedding model
 ```python
 #!/usr/bin/env python3
 """Simple RAG pipeline: embed docs → query with local LLM."""
+import os
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import OllamaEmbeddings
 from langchain_community.llms import Ollama
@@ -87,7 +88,7 @@ from langchain.chains import RetrievalQA
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import DirectoryLoader, TextLoader
 
-DOCS_DIR = "/home/ltangen/docs"
+DOCS_DIR = os.path.expanduser("~/docs")
 EMBED_MODEL = "nomic-embed-text"
 LLM_MODEL = "qwen2.5-coder:7b"
 
