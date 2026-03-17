@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ubuntu OnePlus 7 Pro Powerhouse — Master Setup Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;400;700&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --bg-primary: #030712;
+  --bg-secondary: #0d1117;
+  --bg-card: #0f172a;
+  --accent-cyan: #00f5ff;
+  --accent-magenta: #ff006e;
+  --accent-green: #39ff14;
+  --accent-amber: #f59e0b;
+  --accent-purple: #a855f7;
+  --text-primary: #e2e8f0;
+  --text-muted: #64748b;
+  --border-color: rgba(0,245,255,0.2);
+  --font-heading: 'Orbitron', monospace;
+  --font-body: 'Exo 2', sans-serif;
+  --font-code: 'JetBrains Mono', monospace;
+  --glow-cyan: 0 0 20px rgba(0,245,255,0.4);
+  --glow-magenta: 0 0 20px rgba(255,0,110,0.4);
+  --glow-green: 0 0 20px rgba(57,255,20,0.4);
+  --radius: 12px;
+  --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg-primary);color:var(--text-primary);font-family:var(--font-body);font-size:16px;line-height:1.7;overflow-x:hidden;}
+
+/* Progress Bar */
+#progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent-cyan),var(--accent-magenta),var(--accent-green));width:0%;z-index:9999;transition:width 0.1s;}
+
+/* Grid Background */
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,245,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,0.03) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0;}
+
+/* Sidebar Nav */
+#sidebar{position:fixed;left:0;top:0;height:100vh;width:260px;background:rgba(13,17,23,0.95);border-right:1px solid var(--border-color);padding:20px 0;z-index:100;overflow-y:auto;backdrop-filter:blur(10px);}
+#sidebar .logo{padding:20px;font-family:var(--font-heading);font-size:0.75rem;color:var(--accent-cyan);text-transform:uppercase;letter-spacing:3px;border-bottom:1px solid var(--border-color);margin-bottom:10px;}
+#sidebar .logo span{color:var(--accent-magenta);}
+#sidebar nav a{display:flex;align-items:center;gap:10px;padding:10px 20px;color:var(--text-muted);text-decoration:none;font-size:0.8rem;font-family:var(--font-code);transition:var(--transition);border-left:2px solid transparent;}
+#sidebar nav a:hover,#sidebar nav a.active{color:var(--accent-cyan);border-left-color:var(--accent-cyan);background:rgba(0,245,255,0.05);}
+#sidebar nav a i{width:16px;font-size:0.75rem;}
+.nav-section{padding:10px 20px 5px;font-size:0.65rem;color:var(--accent-magenta);letter-spacing:3px;text-transform:uppercase;font-family:var(--font-heading);margin-top:10px;}
+
+/* Main Content */
+main{margin-left:260px;padding:40px;max-width:1100px;}
+
+/* Hero */
+.hero{position:relative;padding:80px 0 60px;text-align:center;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(0,245,255,0.08) 0%,transparent 70%);}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,245,255,0.1);border:1px solid var(--accent-cyan);padding:6px 16px;border-radius:50px;font-size:0.75rem;font-family:var(--font-code);color:var(--accent-cyan);margin-bottom:24px;letter-spacing:2px;}
+.hero h1{font-family:var(--font-heading);font-size:2.8rem;font-weight:900;background:linear-gradient(135deg,var(--accent-cyan),var(--accent-magenta),var(--accent-purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;margin-bottom:16px;}
+.hero p{font-size:1.1rem;color:var(--text-muted);max-width:600px;margin:0 auto 32px;}
+.hero-tags{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;}
+.hero-tags span{background:rgba(15,23,42,0.8);border:1px solid var(--border-color);padding:4px 12px;border-radius:50px;font-size:0.75rem;font-family:var(--font-code);color:var(--text-muted);}
+
+/* Phase Cards */
+.phase-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:30px 0;}
+.phase-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);padding:20px;text-align:center;transition:var(--transition);cursor:default;}
+.phase-card:hover{border-color:var(--accent-cyan);box-shadow:var(--glow-cyan);transform:translateY(-4px);}
+.phase-card .icon{font-size:2rem;margin-bottom:12px;}
+.phase-card h3{font-family:var(--font-heading);font-size:0.7rem;color:var(--accent-cyan);margin-bottom:6px;letter-spacing:1px;}
+.phase-card p{font-size:0.8rem;color:var(--text-muted);}
+
+/* Sections */
+section{margin-bottom:60px;opacity:0;transform:translateY(20px);transition:opacity 0.6s ease,transform 0.6s ease;}
+section.visible{opacity:1;transform:translateY(0);}
+.section-header{display:flex;align-items:center;gap:16px;margin-bottom:30px;}
+.section-number{font-family:var(--font-heading);font-size:0.7rem;color:var(--accent-magenta);background:rgba(255,0,110,0.1);border:1px solid rgba(255,0,110,0.3);padding:4px 12px;border-radius:50px;letter-spacing:2px;}
+.section-header h2{font-family:var(--font-heading);font-size:1.4rem;color:var(--text-primary);}
+.section-header h2 span{color:var(--accent-cyan);}
+
+/* Step Timeline */
+.timeline{position:relative;padding-left:30px;}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:1px;background:linear-gradient(180deg,var(--accent-cyan),var(--accent-magenta));}
+.step{position:relative;margin-bottom:30px;}
+.step::before{content:'';position:absolute;left:-26px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--accent-cyan);box-shadow:var(--glow-cyan);}
+.step h4{font-family:var(--font-heading);font-size:0.8rem;color:var(--accent-cyan);margin-bottom:10px;letter-spacing:1px;}
+.step p{font-size:0.9rem;color:var(--text-muted);margin-bottom:10px;}
+
+/* Code Blocks */
+.code-wrapper{position:relative;margin:16px 0;}
+.code-label{display:flex;align-items:center;justify-content:space-between;background:#161b22;border:1px solid var(--border-color);border-bottom:none;padding:8px 16px;border-radius:var(--radius) var(--radius) 0 0;font-family:var(--font-code);font-size:0.72rem;color:var(--text-muted);}
+.code-label .lang{color:var(--accent-green);}
+.copy-btn{background:rgba(0,245,255,0.1);border:1px solid var(--accent-cyan);color:var(--accent-cyan);padding:3px 10px;border-radius:6px;cursor:pointer;font-family:var(--font-code);font-size:0.68rem;transition:var(--transition);}
+.copy-btn:hover{background:rgba(0,245,255,0.2);}
+.code-wrapper pre{margin:0;border-radius:0 0 var(--radius) var(--radius);border:1px solid var(--border-color);}
+.code-wrapper pre code{font-family:var(--font-code);font-size:0.82rem;line-height:1.6;}
+
+/* Callouts */
+.callout{border-radius:var(--radius);padding:16px 20px;margin:20px 0;display:flex;gap:14px;align-items:flex-start;}
+.callout-tip{background:rgba(57,255,20,0.05);border:1px solid rgba(57,255,20,0.3);}
+.callout-warning{background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.3);}
+.callout-insight{background:rgba(168,85,247,0.05);border:1px solid rgba(168,85,247,0.3);}
+.callout-action{background:rgba(0,245,255,0.05);border:1px solid rgba(0,245,255,0.3);}
+.callout-icon{font-size:1.2rem;flex-shrink:0;margin-top:2px;}
+.callout-tip .callout-icon{color:var(--accent-green);}
+.callout-warning .callout-icon{color:var(--accent-amber);}
+.callout-insight .callout-icon{color:var(--accent-purple);}
+.callout-action .callout-icon{color:var(--accent-cyan);}
+.callout-content strong{display:block;font-family:var(--font-heading);font-size:0.72rem;letter-spacing:1px;margin-bottom:4px;}
+.callout-tip .callout-content strong{color:var(--accent-green);}
+.callout-warning .callout-content strong{color:var(--accent-amber);}
+.callout-insight .callout-content strong{color:var(--accent-purple);}
+.callout-action .callout-content strong{color:var(--accent-cyan);}
+.callout-content p{font-size:0.88rem;color:var(--text-muted);}
+
+/* Tables */
+.table-wrapper{overflow-x:auto;margin:20px 0;border-radius:var(--radius);border:1px solid var(--border-color);}
+table{width:100%;border-collapse:collapse;}
+th{background:rgba(0,245,255,0.08);padding:12px 16px;text-align:left;font-family:var(--font-heading);font-size:0.7rem;color:var(--accent-cyan);letter-spacing:2px;border-bottom:1px solid var(--border-color);}
+td{padding:12px 16px;font-size:0.85rem;border-bottom:1px solid rgba(255,255,255,0.04);font-family:var(--font-code);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(0,245,255,0.03);}
+.tag{display:inline-block;padding:2px 8px;border-radius:50px;font-size:0.72rem;}
+.tag-green{background:rgba(57,255,20,0.15);color:var(--accent-green);}
+.tag-cyan{background:rgba(0,245,255,0.15);color:var(--accent-cyan);}
+.tag-magenta{background:rgba(255,0,110,0.15);color:var(--accent-magenta);}
+.tag-amber{background:rgba(245,158,11,0.15);color:var(--accent-amber);}
+
+/* Accordion */
+.accordion{border:1px solid var(--border-color);border-radius:var(--radius);overflow:hidden;margin:16px 0;}
+.accordion-header{padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:var(--font-heading);font-size:0.8rem;color:var(--text-primary);background:var(--bg-card);transition:var(--transition);letter-spacing:1px;}
+.accordion-header:hover{background:rgba(0,245,255,0.05);color:var(--accent-cyan);}
+.accordion-header i{color:var(--accent-cyan);transition:var(--transition);}
+.accordion-header.open i{transform:rotate(180deg);}
+.accordion-body{display:none;padding:20px;background:var(--bg-secondary);font-size:0.88rem;color:var(--text-muted);}
+.accordion-body.open{display:block;}
+
+/* Package Grid */
+.pkg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin:16px 0;}
+.pkg-item{background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;padding:12px;font-family:var(--font-code);font-size:0.78rem;display:flex;align-items:center;gap:8px;transition:var(--transition);}
+.pkg-item:hover{border-color:var(--accent-cyan);color:var(--accent-cyan);}
+.pkg-item i{color:var(--accent-green);font-size:0.75rem;}
+
+/* Roadmap */
+.roadmap{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin:20px 0;}
+.roadmap-phase{background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);padding:20px;}
+.roadmap-phase h4{font-family:var(--font-heading);font-size:0.75rem;margin-bottom:14px;letter-spacing:1px;}
+.roadmap-phase.p1 h4{color:var(--accent-cyan);}
+.roadmap-phase.p2 h4{color:var(--accent-green);}
+.roadmap-phase.p3 h4{color:var(--accent-magenta);}
+.roadmap-phase ul{list-style:none;padding:0;}
+.roadmap-phase ul li{font-size:0.82rem;color:var(--text-muted);padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;gap:8px;}
+.roadmap-phase ul li::before{content:'▸';color:var(--accent-cyan);font-size:0.7rem;}
+
+/* Tabs */
+.tab-container{margin:20px 0;}
+.tab-buttons{display:flex;gap:4px;border-bottom:1px solid var(--border-color);margin-bottom:20px;flex-wrap:wrap;}
+.tab-btn{background:none;border:none;padding:10px 20px;font-family:var(--font-heading);font-size:0.72rem;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:var(--transition);letter-spacing:1px;white-space:nowrap;}
+.tab-btn.active,.tab-btn:hover{color:var(--accent-cyan);border-bottom-color:var(--accent-cyan);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* HUD Frame */
+.hud-frame{border:1px solid var(--border-color);border-radius:var(--radius);padding:24px;position:relative;background:var(--bg-card);margin:20px 0;}
+.hud-frame::before,.hud-frame::after{content:'';position:absolute;width:16px;height:16px;border-color:var(--accent-cyan);border-style:solid;}
+.hud-frame::before{top:-1px;left:-1px;border-width:2px 0 0 2px;}
+.hud-frame::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0;}
+
+/* Footer */
+footer{margin-left:260px;padding:40px;border-top:1px solid var(--border-color);text-align:center;font-family:var(--font-code);font-size:0.78rem;color:var(--text-muted);}
+footer span{color:var(--accent-cyan);}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg-primary);}
+::-webkit-scrollbar-thumb{background:var(--accent-cyan);border-radius:2px;}
+
+@media(max-width:768px){
+  #sidebar{display:none;}
+  main,footer{margin-left:0;padding:20px;}
+  .hero h1{font-size:1.8rem;}
+}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+
+<!-- Sidebar -->
+<aside id="sidebar">
+  <div class="logo">⬡ <span>UBUNTU</span> POWERHOUSE</div>
+  <nav>
+    <div class="nav-section">Overview</div>
+    <a href="#hero"><i class="fas fa-home"></i> Overview</a>
+    <a href="#phase1"><i class="fas fa-cog"></i> System Config</a>
+    <div class="nav-section">System</div>
+    <a href="#user-setup"><i class="fas fa-user-shield"></i> Sudo User</a>
+    <a href="#locale"><i class="fas fa-globe"></i> Locale & Env</a>
+    <a href="#packages"><i class="fas fa-box"></i> Packages</a>
+    <div class="nav-section">Development</div>
+    <a href="#python-env"><i class="fab fa-python"></i> Python Stack</a>
+    <a href="#nodejs"><i class="fab fa-node-js"></i> Node & Claude</a>
+    <a href="#github"><i class="fab fa-github"></i> GitHub Auth</a>
+    <div class="nav-section">Tools</div>
+    <a href="#ventoy"><i class="fas fa-usb"></i> Ventoy Fix</a>
+    <a href="#recovery"><i class="fas fa-medkit"></i> Recovery Tools</a>
+    <a href="#samplemind"><i class="fas fa-music"></i> SampleMind AI</a>
+    <div class="nav-section">System</div>
+    <a href="#startup"><i class="fas fa-rocket"></i> Startup Script</a>
+    <a href="#roadmap"><i class="fas fa-map"></i> Roadmap</a>
+  </nav>
+</aside>
+
+<!-- Main -->
+<main>
+
+<!-- Hero -->
+<div class="hero" id="hero">
+  <div class="hero-badge"><i class="fas fa-mobile-alt"></i> ONEPLUS 7 PRO — GM1913</div>
+  <h1>Ubuntu Powerhouse<br>Master Setup Guide</h1>
+  <p>Complete configuration, tools, development environment, recovery stack and SampleMind AI setup inside Ubuntu chroot on Android.</p>
+  <div class="hero-tags">
+    <span>Ubuntu 24.04.3 LTS</span>
+    <span>Android Chroot</span>
+    <span>Claude Code</span>
+    <span>SampleMind AI</span>
+    <span>GitHub CLI</span>
+    <span>Ventoy Fix</span>
+    <span>Boot Recovery</span>
+  </div>
+</div>
+
+<!-- Phase Overview -->
+<div class="phase-grid">
+  <div class="phase-card"><div class="icon">⚙️</div><h3>Phase 1</h3><p>System Config & User Setup</p></div>
+  <div class="phase-card"><div class="icon">📦</div><h3>Phase 2</h3><p>Packages & Dev Stack</p></div>
+  <div class="phase-card"><div class="icon">🔑</div><h3>Phase 3</h3><p>GitHub Auth & Git</p></div>
+  <div class="phase-card"><div class="icon">💾</div><h3>Phase 4</h3><p>Ventoy Fix & Recovery</p></div>
+  <div class="phase-card"><div class="icon">🎵</div><h3>Phase 5</h3><p>SampleMind AI Dev</p></div>
+  <div class="phase-card"><div class="icon">🚀</div><h3>Phase 6</h3><p>Startup & Automation</p></div>
+</div>
+
+<!-- PHASE 1: SYSTEM CONFIG -->
+<section id="phase1">
+  <div class="section-header">
+    <span class="section-number">PHASE 01</span>
+    <h2>System <span>Configuration</span></h2>
+  </div>
+
+  <div class="callout callout-action">
+    <div class="callout-icon"><i class="fas fa-bolt"></i></div>
+    <div class="callout-content"><strong>Action Step</strong><p>Run all Phase 1 commands as root inside Ubuntu chroot. Set TMPDIR first — always.</p></div>
+  </div>
+
+  <!-- USER SETUP -->
+  <section id="user-setup">
+    <div class="section-header">
+      <span class="section-number">1.1</span>
+      <h2>Sudo <span>User Setup</span></h2>
+    </div>
+    <div class="code-wrapper">
+      <div class="code-label"><span class="lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash"># Always set these first in every session
+export TMPDIR=/tmp
+export TEMP=/tmp
+export TMP=/tmp
+export DEBIAN_FRONTEND=noninteractive
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+export HOME=/root
+export TERM=xterm
+
+# Install sudo and user tools
+apt install -y sudo adduser passwd
+
+# Create user (replace 'tangen' with your username)
+adduser tangen
+
+# Grant full sudo privileges
+usermod -aG sudo tangen
+
+# Verify sudo access
+groups tangen
+
+# Switch to user
+su - tangen</code></pre>
+    </div>
+  </section>
+
+  <!-- LOCALE -->
+  <section id="locale">
+    <div class="section-header">
+      <span class="section-number">1.2</span>
+      <h2>Locale <span>& Environment</span></h2>
+    </div>
+    <div class="callout callout-tip">
+      <div class="callout-icon"><i class="fas fa-lightbulb"></i></div>
+      <div class="callout-content"><strong>Pro Tip</strong><p>Setting locale permanently in /etc/environment means you never need to export LANG again each session.</p></div>
+    </div>
+    <div class="code-wrapper">
+      <div class="code-label"><span class="lang">bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash"># Install locale tools
+apt install -y locales tzdata
+
+# Set timezone to Oslo
+ln -sf /usr/share/zoneinfo/Europe/Oslo /etc/localtime
+echo "Europe/Oslo" > /etc/timezone
+
+# Generate locale
+locale-gen en_US.UTF-8
+update-locale LANG=en_US.UTF-8
+
+# Make ALL env vars permanent
+cat >> /etc/environment << 'EOF'
+LANG=en_US.UTF-8
+LANGUAGE=en_US:en
+LC_ALL=en_US.UTF-8
+TMPDIR=/tmp
+TEMP=/tmp
+TMP=/tmp
+TERM=xterm
+DEBIAN_FRONTEND=noninteractive
+EOF
+
+# Verify
+cat /etc/environment</code></pre>
+    </div>
+
+    <div class="code-wrapper">
+      <div class="code-label"><span class="lang">bash — User Profile</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash"># Add to /root/.bashrc and /home/tangen/.bashrc
+cat >> /root/.bashrc << 'EOF'
+
+# Ubuntu Chroot Environment
+export TMPDIR=/tmp
+export LANG=en_US.UTF-8
+export TERM=xterm
+export DEBIAN_FRONTEND=noninteractive
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/go/bin
+export EDITOR=nano
+export VISUAL=nano
+
+# Aliases
+alias ll='ls -lah --color=auto'
+alias la='ls -A --color=auto'
+alias gs='git status'
+alias gp='git push'
+alias gl='git log --oneline'
+alias python='python3'
+alias pip='pip3'
+alias update='apt update && apt upgrade -y'
+alias cleanup='apt autoremove -y && apt autoclean'
+alias myip='curl -s ifconfig.me'
+
+# SampleMind shortcut
+alias sm='cd ~/projects/samplemind && source venv/bin/activate'
+EOF
+
+# Apply same to tangen user
+cp /root/.bashrc /home/tangen/.bashrc
+chown tangen:tangen /home/tangen/.bashrc
+
+source /root/.bashrc</code></pre>
+    </div>
+  </section>
+</section>
+
+<!-- PHASE 2: PACKAGES -->
+<section id="packages">
+  <div class="section-header">
+    <span class="section-number">PHASE 02</span>
+    <h2>Core <span>Packages & Tools</span></h2>
+  </div>
+
+  <div class="tab-container">
+    <div class="tab-buttons">
+      <button class="tab-btn active" onclick="openTab(event,'tab-essential')">Essential</button>
+      <button class="tab-btn" onclick="openTab(event,'tab-dev')">Dev Tools</button>
+      <button class="tab-btn" onclick="openTab(event,'tab-audio')">Audio/ML</button>
+      <button class="tab-btn" onclick="openTab(event,'tab-security')">Security</button>
+      <button class="tab-btn" onclick="openTab(event,'tab-boot')">Boot/Recovery</button>
+    </div>
+
+    <div id="tab-essential" class="tab-panel active">
+      <div class="code-wrapper">
+        <div class="code-label"><span class="lang">bash — Essential System Packages</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-bash">apt install -y \
+  build-essential \
+  software-properties-common \
+  apt-transport-https \
+  ca-certificates \
+  gnupg \
+  lsb-release \
+  curl wget \
+  git \
+  nano vim \
+  htop neofetch \
+  tree \
+  zip unzip \
+  tar \
+  rsync \
+  tmux \
+  screen \
+  net-tools \
+  iputils-ping \
+  dnsutils \
+  openssh-client \
+  sudo \
+  less \
+  jq \
+  file \
+  bc \
+  man-db</code></pre>
+      </div>
+    </div>
+
+    <div id="tab-dev" class="tab-panel">
+      <div class="code-wrapper">
+        <div class="code-label"><span class="lang">bash — Development Stack</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-bash">apt install -y \
+  python3 \
+  python3-pip \
+  python3-venv \
+  python3-dev \
+  python3-setuptools \
+  python3-wheel \
+  nodejs \
+  npm \
+  golang \
+  rustc \
+  cargo \
+  gcc \
+  g++ \
+  make \
+  cmake \
+  pkg-config \
+  libssl-dev \
+  libffi-dev \
+  libxml2-dev \
+  libxslt1-dev \
+  sqlite3 \
+  libsqlite3-dev \
+  postgresql-client \
+  redis-tools
+
+# Upgrade pip
+python3 -m pip install --upgrade pip setuptools wheel</code></pre>
+      </div>
+    </div>
+
+    <div id="tab-audio" class="tab-panel">
+      <div class="code-wrapper">
+        <div class="code-label"><span class="lang">bash — Audio & ML Libraries</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-bash">apt install -y \
+  ffmpeg \
+  libsndfile1 \
+  libsndfile1-dev \
+  libportaudio2 \
+  libportaudiocpp0 \
+  portaudio19-dev \
+  libasound2-dev \
+  libflac-dev \
+  libvorbis-dev \
+  libmp3lame-dev \
+  libopus-dev \
+  sox \
+  libsox-dev \
+  libfftw3-dev \
+  liblapack-dev \
+  libblas-dev \
+  gfortran
+
+# Python ML/Audio stack
+pip3 install \
+  librosa \
+  numpy \
+  scipy \
+  pandas \
+  matplotlib \
+  soundfile \
+  audioread \
+  resampy \
+  torch \
+  torchaudio \
+  transformers \
+  datasets \
+  accelerate \
+  openai-whisper \
+  chromadb \
+  scikit-learn \
+  joblib</code></pre>
+      </div>
+    </div>
+
+    <div id="tab-security" class="tab-panel">
+      <div class="code-wrapper">
+        <div class="code-label"><span class="lang">bash — Security & Network Tools</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-bash">apt install -y \
+  nmap \
+  netcat-openbsd \
+  tcpdump \
+  wireshark-common \
+  tshark \
+  traceroute \
+  whois \
+  openssl \
+  gnupg2 \
+  pass \
+  fail2ban \
+  ufw \
+  iptables \
+  ssh \
+  sshpass \
+  hydra \
+  nikto \
+  sqlmap \
+  dirb \
+  hashcat \
+  john \
+  aircrack-ng
+
+# Setup UFW firewall
+ufw --force enable
+ufw allow ssh
+ufw status</code></pre>
+      </div>
+    </div>
+
+    <div id="tab-boot" class="tab-panel">
+      <div class="code-wrapper">
+        <div class="code-label"><span class="lang">bash — Boot & Recovery Tools</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre><code class="language-bash">apt install -y \
+  parted \
+  gparted \
+  fdisk \
+  gdisk \
+  dosfstools \
+  exfatprogs \
+  exfat-fuse \
+  ntfs-3g \
+  e2fsprogs \
+  btrfs-progs \
+  xfsprogs \
+  testdisk \
+  photorec \
+  ddrescue \
+  gddrescue \
+  grub-common \
+  grub2-common \
+  os-prober \
+  efibootmgr \
+  mokutil \
+  sbsigntool \
+  udisks2 \
+  lvm2 \
+  mdadm
+
+echo "Boot/recovery tools installed ✅"</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHASE 3: GITHUB -->
+<section id="github">
+  <div class="section-header">
+    <span class="section-number">PHASE 03</span>
+    <h2>GitHub <span>Auth & Git Config</span></h2>
+  </div>
+
+  <div class="callout callout-insight">
+    <div class="callout-icon"><i class="fas fa-brain"></i></div>
+    <div class="callout-content"><strong>Deep Insight</strong><p>GitHub CLI (gh) handles OAuth login and token storage automatically — much better than manual PAT tokens. It also enables creating repos, PRs, and issues from terminal.</p></div>
+  </div>
+
+  <div class="code-wrapper">
+    <div class="code-label"><span class="lang">bash — Install GitHub CLI</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><code class="language-bash"># Install GitHub CLI
+curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | \
+  dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+
+chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] \
+  https://cli.github.com/packages stable main" | \
+  tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+
+apt update
+apt install -y gh
+
+# Verify
+gh --version</code></pre>
+  </div>
+
+  <div class="code-wrapper">
+    <div class="code-label"><span class="lang">bash — GitHub Login & Git Config</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><code class="language-bash"># Login with GitHub CLI (opens browser on phone)
+gh auth login
+# Choose: GitHub.com → HTTPS → Login with browser
+# Copy the code → open browser on OnePlus
+# Paste at github.com/login/device
+
+# Configure Git identity
+git config --global user.name "Tangen"
+git config --global user.email "your@email.com"
+git config --global core.editor "nano"
+git config --global init.defaultBranch "main"
+git config --global pull.rebase false
+git config --global credential.helper store
+git config --global core.autocrlf input
+
+# Verify login
+gh auth status
+git config --list</code></pre>
+  </div>
+
+  <div class="code-wrapper">
+    <div class="code-label"><span class="lang">bash — SSH Key for GitHub</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><code class="language-bash"># Generate SSH key
+ssh-keygen -t ed25519 -C "your@email.com" -f ~/.ssh/github_ed25519 -N ""
+
+# Add to ssh-agent
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/github_ed25519
+
+# Add SSH config
+mkdir -p ~/.ssh
+cat >> ~/.ssh/config << 'EOF'
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/github_ed25519
+  AddKeysToAgent yes
+EOF
+
+chmod 600 ~/.ssh/config
+
+# Upload key to GitHub automatically
+gh ssh-key add ~/.ssh/github_ed25519.pub --title "OnePlus7Pro-Ubuntu"
+
+# Test connection
+ssh -T git@github.com</code></pre>
+  </div>
+
+  <div class="code-wrapper">
+    <div class="code-label"><span class="lang">bash — Create SampleMind Repo</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><code class="language-bash"># Create GitHub repo for SampleMind
+cd ~/projects/samplemind
+git init
+git add .
+git commit -m "feat: initial SampleMind AI project setup"
+
+# Create remote repo and push
+gh repo create samplemind-ai \
+  --description "AI-powered audio sample management system" \
+  --private \
+  --source=. \
+  --remote=origin \
+  --push
+
+echo "SampleMind repo live on GitHub ✅"</code></pre>
+  </div>
+</section>
+
+<!-- PHASE 4: VENTOY FIX -->
+<section id="ventoy">
+  <div class="section-header">
+    <span class="section-number">PHASE 04</span>
+    <h2>Ventoy USB <span>Fix & Boot Recovery</span></h2>
+  </div>
+
+  <div class="callout callout-warning">
+    <div class="callout-icon"><i class="fas fa-exclamation-triangle"></i></div>
+    <div class="callout-content"><strong>Watch Out</strong><p>Plug in the Ventoy USB to the PC, then connect the phone to PC via USB. The USB might appear as a different device path. Always run lsblk first to confirm before mounting.</p></div>
+  </div>
+
+  <div class="code-wrapper">
+    <div class="code-label"><span class="lang">bash — Find & Mount Ventoy</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><code class="language-bash"># Find all block devices
+lsblk -f
+
+# Look for 64GB exFAT partition
+# Usually /dev/sdb2 or /dev/sdc2
+
+# Install exFAT support
+apt install -y exfat-fuse exfatprogs
+
+# Create mount point
+mkdir -p /mnt/ventoy
+
+# Mount Ventoy data partition (adjust sdX2)
+mount -t exfat /dev/sdb2 /mnt/ventoy
+
+# Verify ISOs are there
+ls -lah /mnt/ventoy/
+ls /mnt/ventoy/*.iso</code></pre>
+  </div>
+
+  <div class="code-wrapper">
+    <div class="code-label"><span class="lang">bash — Fix Ventoy Config</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><code class="language-bash"># Check ventoy folder
+ls /mnt/ventoy/ventoy/
+
+# Backup broken config first
+cp /mnt/ventoy/ventoy/ventoy.json /mnt/ventoy/ventoy/ventoy.json.bak
+
+# Delete broken config
+rm /mnt/ventoy/ventoy/ventoy.json
+
+# Verify ISOs still present
+ls /mnt/ventoy/*.iso
+
+# Unmount cleanly
+umount /mnt/ventoy
+
+echo "Ventoy config reset — ISOs will show on next boot ✅"</code></pre>
+  </div>
+
+  <section id="recovery">
+    <div class="section-header">
+      <span class="section-number">4.2</span>
+      <h2>Recovery <span>Toolset</span></h2>
+    </div>
+    <div class="code-wrapper">
+      <div class="code-label"><span class="lang">bash — Disk Recovery Tools</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code class="language-bash"># Verify disk health
+fdisk -l /dev/sdb
+gdisk -l /dev/sdb
+
+# Check filesystem
+fsck.exfat /dev/sdb2
+
+# Recover deleted files with testdisk
+testdisk /dev/sdb
+
+# Clone disk safely
+ddrescue /dev/sdb /dev/sdc rescue.log
+
+# Scan for partitions
+parted /dev/sdb print all
+
+# View partition table
+sgdisk --print /dev/sdb</code></pre>
+    </div>
+  </section>
+</section>
+
+<!-- PHASE 5: SAMPLEMIND AI -->
+<section id="samplemind">
+  <div class="section-header">
+    <span class="section-number">PHASE 05</span>
+    <h2>SampleMind AI <span>Development Setup</span></h2>
+  </div>
+
+  <div class="hud-frame">
+    <div class="callout callout-insight">
+      <div class="callout-icon"><i class="fas fa-brain"></i></div>
+      <div class="callout-content"><strong>Architecture Overview</strong><p>SampleMind AI uses ChromaDB for vector storage, Hermes AI for intelligent tagging, librosa for audio analysis, Rich/Typer for CLI, and FastAPI for backend. Claude Code drives the development from inside this Ubuntu environment.</p></div>
+    </div>
+  </div>
+
+  <div class="code-wrapper">
+    <div class="code-label"><span class="lang">bash — Project Structure</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><code class="language-bash"># Switch to user
+su - tangen
+
+# Create project
+mkdir -p ~/projects/samplemind
+cd ~/projects/samplemind
+
+# Python virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# Create project structure
+mkdir -p {src/{core,ai,cli,api,utils},tests,data,models,docs,scripts}
+
+touch src/__init__.py
+touch src/core/__init__.py
+touch src/ai/__init__.py
+touch src/cli/__init__.py
+touch src/api/__init__.py
+touch src/utils/__init__.py
+
+echo "SampleMind structure created ✅"
+tree .</code></pre>
+  </div>
+
+  <div class="code-wrapper">
+    <div class="code-label"><span class="lang">bash — Full Python Dependencies</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><code class="language-bash">pip install \
+  librosa \
+  numpy \
+  scipy \
+  pandas \
+  soundfile \
+  audioread \
+  resampy \
+  torch \
+  torchaudio \
+  transformers \
+  datasets \
+  accelerate \
+  chromadb \
+  openai \
+  anthropic \
+  scikit-learn \
+  joblib \
+  fastapi \
+  uvicorn \
+  rich \
+  typer \
+  click \
+  pydantic \
+  python-dotenv \
+  sqlalchemy \
+  alembic \
+  httpx \
+  aiofiles \
+  watchdog \
+  tqdm \
+  loguru \
+  pytest \
+  pytest-asyncio \
+  black \
+  flake8 \
+  mypy
+
+# Save requirements
+pip freeze > requirements.txt
+echo "Dependencies installed ✅"</code></pre>
+  </div>
+
+  <div class="code-wrapper">
+    <div class="code-label"><span class="lang">python — Hermes AI Tagger Module</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><code class="language-python"># src/ai/hermes_tagger.py
+import anthropic
+import librosa
+import numpy as np
+import soundfile as sf
+from pathlib import Path
+from dataclasses import dataclass
+from typing import Optional
+import json
+
+@dataclass
+class AudioTags:
+    bpm: float
+    key: str
+    scale: str
+    genre: list[str]
+    mood: list[str]
+    instruments: list[str]
+    energy: float
+    danceability: float
+    tags: list[str]
+
+class HermesTagger:
+    def __init__(self, api_key: Optional[str] = None):
+        self.client = anthropic.Anthropic(api_key=api_key)
+        self.model = "claude-opus-4-6"
+
+    def analyze_audio_features(self, filepath: str) -> dict:
+        """Extract low-level audio features with librosa."""
+        y, sr = librosa.load(filepath, sr=None)
+        tempo, _ = librosa.beat.beat_track(y=y, sr=sr)
+        chroma = librosa.feature.chroma_cqt(y=y, sr=sr)
+        spectral_centroids = librosa.feature.spectral_centroid(y=y, sr=sr)
+        rms = librosa.feature.rms(y=y)
+        
+        keys = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
+        key_idx = np.argmax(np.mean(chroma, axis=1))
+        
+        return {
+            "bpm": round(float(tempo), 1),
+            "key": keys[key_idx],
+            "energy": float(np.mean(rms)),
+            "brightness": float(np.mean(spectral_centroids)),
+            "duration": float(len(y) / sr)
+        }
+
+    def generate_tags(self, filepath: str) -> AudioTags:
+        """Use Claude to intelligently tag audio sample."""
+        features = self.analyze_audio_features(filepath)
+        filename = Path(filepath).name
+
+        prompt = f"""Analyze this audio sample and generate comprehensive tags.
+        
+        File: {filename}
+        Audio Features:
+        - BPM: {features['bpm']}
+        - Key: {features['key']}
+        - Energy level: {features['energy']:.4f}
+        - Duration: {features['duration']:.2f}s
+        - Brightness: {features['brightness']:.2f}
+        
+        Return ONLY valid JSON with these exact fields:
+        {{
+          "bpm": float,
+          "key": "string",
+          "scale": "major|minor",
+          "genre": ["tag1","tag2"],
+          "mood": ["tag1","tag2"],
+          "instruments": ["tag1","tag2"],
+          "energy": float 0-1,
+          "danceability": float 0-1,
+          "tags": ["descriptive","tags","list"]
+        }}"""
+
+        response = self.client.messages.create(
+            model=self.model,
+            max_tokens=500,
+            messages=[{"role": "user", "content": prompt}]
+        )
+
+        data = json.loads(response.content[0].text)
+        return AudioTags(**data)
+</code></pre>
+  </div>
+
+  <div class="code-wrapper">
+    <div class="code-label"><span class="lang">python — CLI Entry Point</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><code class="language-python"># src/cli/main.py
+import typer
+from rich.console import Console
+from rich.table import Table
+from rich.progress import track
+from rich import print as rprint
+from pathlib import Path
+from ..ai.hermes_tagger import HermesTagger
+
+app = typer.Typer(help="SampleMind AI — Intelligent Audio Sample Manager")
+console = Console()
+
+@app.command()
+def tag(
+    path: str = typer.Argument(..., help="Audio file or folder path"),
+    output: str = typer.Option("json", help="Output format: json|table|csv")
+):
+    """Tag audio samples using Hermes AI."""
+    tagger = HermesTagger()
+    audio_path = Path(path)
+
+    if audio_path.is_file():
+        files = [audio_path]
+    else:
+        files = list(audio_path.glob("**/*.wav")) + \
+                list(audio_path.glob("**/*.mp3")) + \
+                list(audio_path.glob("**/*.flac"))
+
+    table = Table(title="SampleMind AI Tags", style="cyan")
+    table.add_column("File", style="white")
+    table.add_column("BPM", style="green")
+    table.add_column("Key", style="yellow")
+    table.add_column("Genre", style="magenta")
+    table.add_column("Mood", style="blue")
+    table.add_column("Energy", style="red")
+
+    for f in track(files, description="Analyzing samples..."):
+        tags = tagger.generate_tags(str(f))
+        table.add_row(
+            f.name,
+            str(tags.bpm),
+            f"{tags.key} {tags.scale}",
+            ", ".join(tags.genre[:2]),
+            ", ".join(tags.mood[:2]),
+            f"{tags.energy:.2f}"
+        )
+
+    console.print(table)
+
+if __name__ == "__main__":
+    app()</code></pre>
+  </div>
+
+  <div class="code-wrapper">
+    <div class="code-label"><span class="lang">bash — Launch Claude Code for SampleMind</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><code class="language-bash"># Always activate venv first
+cd ~/projects/samplemind
+source venv/bin/activate
+
+# Set API key
+export ANTHROPIC_API_KEY=your-key-here
+
+# Launch Claude Code in project context
+claude
+
+# First prompt to give Claude Code:
+# "You are working on SampleMind AI, an audio sample
+# management system. Start by implementing the ChromaDB
+# vector database integration for the Hermes tagger,
+# then build the FastAPI backend endpoints."</code></pre>
+  </div>
+</section>
+
+<!-- PHASE 6: STARTUP SCRIPT -->
+<section id="startup">
+  <div class="section-header">
+    <span class="section-number">PHASE 06</span>
+    <h2>Startup Script <span>& Automation</span></h2>
+  </div>
+
+  <div class="callout callout-tip">
+    <div class="callout-icon"><i class="fas fa-lightbulb"></i></div>
+    <div class="callout-content"><strong>Pro Tip</strong><p>Save this script in Termux home and run it every time you want Ubuntu. It mounts everything automatically and drops you into your SampleMind project.</p></div>
+  </div>
+
+  <div class="code-wrapper">
+    <div class="code-label"><span class="lang">bash — Master Startup Script</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><code class="language-bash">#!/bin/bash
+# ubuntu.sh — Ubuntu Powerhouse Launcher
+# Save to: /data/data/com.termux/files/home/ubuntu.sh
+# Run: bash ~/ubuntu.sh
+
+UBUNTU_DIR="/data/local/ubuntu"
+USER="tangen"
+
+echo "⬡ Launching Ubuntu Powerhouse..."
+
+su -c "
+  # Mount filesystems
+  mountpoint -q $UBUNTU_DIR/dev     || mount -o bind /dev $UBUNTU_DIR/dev
+  mountpoint -q $UBUNTU_DIR/dev/pts || mount -o bind /dev/pts $UBUNTU_DIR/dev/pts
+  mountpoint -q $UBUNTU_DIR/proc    || mount -o bind /proc $UBUNTU_DIR/proc
+  mountpoint -q $UBUNTU_DIR/sys     || mount -o bind /sys $UBUNTU_DIR/sys
+
+  # Mount DNS
+  mount -o bind /etc/resolv.conf $UBUNTU_DIR/etc/resolv.conf 2>/dev/null || true
+
+  echo '✅ Filesystems mounted'
+
+  # Enter chroot as user
+  chroot $UBUNTU_DIR /bin/bash -c '
+    source /etc/environment 2>/dev/null
+    export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    export HOME=/home/$USER
+    export TERM=xterm
+    export TMPDIR=/tmp
+    export LANG=en_US.UTF-8
+    export DEBIAN_FRONTEND=noninteractive
+
+    # Auto-activate SampleMind venv if exists
+    if [ -d /home/$USER/projects/samplemind/venv ]; then
+      source /home/$USER/projects/samplemind/venv/bin/activate
+      cd /home/$USER/projects/samplemind
+      echo \"🎵 SampleMind venv activated\"
+    fi
+
+    exec su - $USER
+  '
+"</code></pre>
+  </div>
+
+  <div class="code-wrapper">
+    <div class="code-label"><span class="lang">bash — Setup & Run</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><code class="language-bash"># In regular Termux — save and run
+chmod +x ~/ubuntu.sh
+
+# Optional: add alias to Termux .bashrc
+echo "alias ubuntu='bash ~/ubuntu.sh'" >> ~/.bashrc
+source ~/.bashrc
+
+# Launch anytime with:
+ubuntu</code></pre>
+  </div>
+
+  <!-- ENVIRONMENT TABLE -->
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Tool</th>
+          <th>Purpose</th>
+          <th>Location</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Ubuntu 24.04.3</td><td>Main OS environment</td><td>/data/local/ubuntu</td><td><span class="tag tag-green">✅ Active</span></td></tr>
+        <tr><td>Claude Code</td><td>AI development assistant</td><td>npm global</td><td><span class="tag tag-green">✅ Active</span></td></tr>
+        <tr><td>GitHub CLI</td><td>Git & repo management</td><td>/usr/bin/gh</td><td><span class="tag tag-cyan">Install</span></td></tr>
+        <tr><td>SampleMind venv</td><td>Python ML environment</td><td>~/projects/samplemind/venv</td><td><span class="tag tag-cyan">Setup</span></td></tr>
+        <tr><td>exfat-fuse</td><td>Ventoy USB mounting</td><td>/usr/bin</td><td><span class="tag tag-cyan">Install</span></td></tr>
+        <tr><td>Hermes Tagger</td><td>AI audio classification</td><td>src/ai/</td><td><span class="tag tag-amber">Build</span></td></tr>
+        <tr><td>FastAPI backend</td><td>REST API layer</td><td>src/api/</td><td><span class="tag tag-amber">Build</span></td></tr>
+        <tr><td>ChromaDB</td><td>Vector sample database</td><td>data/</td><td><span class="tag tag-amber">Build</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div class="section-header">
+    <span class="section-number">ROADMAP</span>
+    <h2>Project <span>Timeline</span></h2>
+  </div>
+  <div class="roadmap">
+    <div class="roadmap-phase p1">
+      <h4>🔧 Phase 1 — Now</h4>
+      <ul>
+        <li>Ubuntu chroot configured</li>
+        <li>Claude Code authorized</li>
+        <li>Fix Ventoy USB</li>
+        <li>GitHub CLI auth</li>
+        <li>SampleMind repo created</li>
+        <li>Hermes tagger base</li>
+      </ul>
+    </div>
+    <div class="roadmap-phase p2">
+      <h4>🎵 Phase 2 — This Week</h4>
+      <ul>
+        <li>ChromaDB integration</li>
+        <li>Full Hermes AI tagger</li>
+        <li>CLI with Rich/Typer</li>
+        <li>Audio analysis pipeline</li>
+        <li>Sample database seeded</li>
+        <li>Unit tests written</li>
+      </ul>
+    </div>
+    <div class="roadmap-phase p3">
+      <h4>🚀 Phase 3 — Next Month</h4>
+      <ul>
+        <li>FastAPI backend live</li>
+        <li>Beta release v0.1</li>
+        <li>GitHub Actions CI/CD</li>
+        <li>Documentation site</li>
+        <li>Investor demo ready</li>
+        <li>Amsterdam study prep</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>⬡ <span>Ubuntu Powerhouse</span> — OnePlus 7 Pro GM1913 · Ubuntu 24.04.3 LTS Noble · Generated by Claude</p>
+  <p style="margin-top:8px;">SampleMind AI · Sandvika, Norway · 2026</p>
+</footer>
+
+<script>
+// Progress bar
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = (scrollTop / docHeight) * 100;
+  document.getElementById('progress-bar').style.width = progress + '%';
+});
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('section').forEach(s => observer.observe(s));
+
+// Active nav
+const navLinks = document.querySelectorAll('#sidebar nav a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  document.querySelectorAll('section[id]').forEach(s => {
+    if(window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.remove('active');
+    if(a.getAttribute('href') === '#' + current) a.classList.add('active');
+  });
+});
+
+// Copy code
+function copyCode(btn) {
+  const code = btn.closest('.code-wrapper').querySelector('code').innerText;
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+
+// Tabs
+function openTab(e, id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  e.target.classList.add('active');
+}
+
+// Accordion
+document.querySelectorAll('.accordion-header').forEach(h => {
+  h.addEventListener('click', () => {
+    h.classList.toggle('open');
+    h.nextElementSibling.classList.toggle('open');
+  });
+});
+
+// Highlight.js
+document.addEventListener('DOMContentLoaded', () => hljs.highlightAll());
+</script>
+</body>
+</html>

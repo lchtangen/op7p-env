@@ -1,0 +1,229 @@
+#!/bin/bash
+# perf-tune.sh — OnePlus 7 Pro (SM8150) performance tuning — native Linux approach
+# Uses /etc/sysctl.d/, udev rules, and systemd for proper OS-level persistence.
+# Run as root: sudo bash perf-tune.sh [--max|--balanced|--battery|--status|--remove]
+#
+# CPU: Snapdragon 855 (SM8150)
+#   LITTLE: cpu0-3  @ 1785.6 MHz  (policy0)
+#   MID:    cpu4-6  @ 2419.2 MHz  (policy4)
+#   PRIME:  cpu7    @ 2841.6 MHz  (policy7)
+#   GPU:    Adreno 640v2 @ 585 MHz (pwrlevel 0=max 4=min)
+
+set -uo pipefail
+
+MODE="${1:---balanced}"
+BOLD=$'\033[1m'; CYAN=$'\033[0;36m'; GREEN=$'\033[0;32m'
+YELLOW=$'\033[0;33m'; RED=$'\033[0;31m'; RESET=$'\033[0m'
+
+log()  { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
+ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
+warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
+err()  { echo -e "${RED}  ✗ $1${RESET}"; }
+ws()   { echo "$2" > "$1" 2>/dev/null && ok "$(basename $1) = $2" || warn "skip: $(basename $1)"; }
+
+# ─── Status ──────────────────────────────────────────────────────────────────
+show_status() {
+    echo -e "\n${BOLD}Performance Status — SM8150:${RESET}"
+    for p in 0 4 7; do
+        GOV=$(cat /sys/devices/system/cpu/cpufreq/policy${p}/scaling_governor 2>/dev/null || echo "N/A")
+        FREQ=$(cat /sys/devices/system/cpu/cpufreq/policy${p}/cpuinfo_cur_freq 2>/dev/null || echo "0")
+        MAXF=$(cat /sys/devices/system/cpu/cpufreq/policy${p}/cpuinfo_max_freq 2>/dev/null || echo "0")
+        FREQ=${FREQ:-0}; MAXF=${MAXF:-0}
+        printf "  CPU policy%d: %-12s  cur=%4d MHz  max=%4d MHz\n" "$p" "$GOV" "$((FREQ/1000))" "$((MAXF/1000))"
+    done
+    echo ""
+    echo "  I/O (sda):            $(cat /sys/block/sda/queue/scheduler 2>/dev/null || echo N/A)"
+    echo "  swappiness:           $(cat /proc/sys/vm/swappiness 2>/dev/null)"
+    echo "  dirty_ratio:          $(cat /proc/sys/vm/dirty_ratio 2>/dev/null)"
+    echo "  vfs_cache_pressure:   $(cat /proc/sys/vm/vfs_cache_pressure 2>/dev/null)"
+    echo "  TCP congestion:       $(cat /proc/sys/net/ipv4/tcp_congestion_control 2>/dev/null)"
+    echo "  net.core.rmem_max:    $(cat /proc/sys/net/core/rmem_max 2>/dev/null)"
+    echo "  sched_upmigrate:      $(cat /proc/sys/kernel/sched_upmigrate 2>/dev/null || echo N/A)"
+    echo "  sched_boost:          $(cat /proc/sys/kernel/sched_boost 2>/dev/null || echo N/A)"
+    echo ""
+    GPU="/sys/class/kgsl/kgsl-3d0"
+    GPU_GOV=$(cat "${GPU}/devfreq/governor"  2>/dev/null || echo "N/A")
+    GPU_LVL=$(cat "${GPU}/min_pwrlevel"      2>/dev/null || echo "N/A")
+    GPU_DEF=$(cat "${GPU}/default_pwrlevel"  2>/dev/null || echo "N/A")
+    GPU_CLK=$(cat "${GPU}/gpuclk"            2>/dev/null || echo "0"); GPU_CLK=${GPU_CLK:-0}
+    printf "  GPU governor:         %s\n" "$GPU_GOV"
+    printf "  GPU pwrlevel (min):   %s  (0=585MHz, 4=257MHz)\n" "$GPU_LVL"
+    printf "  GPU pwrlevel (def):   %s\n" "$GPU_DEF"
+    printf "  GPU clock:            %d MHz\n" "$((GPU_CLK/1000000))"
+    echo ""
+    echo "  sysctl.d config:      $(ls /etc/sysctl.d/99-perf*.conf 2>/dev/null | tr '\n' ' ' || echo 'none')"
+    echo "  udev I/O rule:        $(ls /etc/udev/rules.d/60-io-scheduler.rules 2>/dev/null || echo 'none')"
+    echo "  systemd unit:         $(systemctl is-enabled perf-tune 2>/dev/null | grep -v '^$' || echo 'not installed')"
+}
+
+if [ "$MODE" = "--status" ]; then show_status; exit 0; fi
+
+if [ "$(id -u)" != "0" ]; then
+    err "Run as root: sudo bash $0 $MODE"
+    show_status
+    exit 1
+fi
+
+echo -e "\n${BOLD}${CYAN}Performance Tuning — SM8150 | Mode: ${MODE}${RESET}\n"
+
+# ─── Determine parameters by mode ─────────────────────────────────────────────
+case "$MODE" in
+    --max)
+        CPU_GOV="performance"
+        SCHED_UP="75	75"; SCHED_DN="60	60"; SCHED_BOOST=1
+        SWAPPINESS=10;  DIRTY=40; DIRTY_BG=15
+        GPU_GOV="performance"; GPU_MIN=0; GPU_DEF=0
+        ;;
+    --balanced)
+        CPU_GOV="schedutil"
+        SCHED_UP="80	80"; SCHED_DN="65	65"; SCHED_BOOST=0
+        SWAPPINESS=20; DIRTY=30; DIRTY_BG=10
+        GPU_GOV="msm-adreno-tz"; GPU_MIN=4; GPU_DEF=2
+        ;;
+    --battery)
+        CPU_GOV="schedutil"
+        SCHED_UP="95	95"; SCHED_DN="85	85"; SCHED_BOOST=0
+        SWAPPINESS=40; DIRTY=20; DIRTY_BG=5
+        GPU_GOV="powersave"; GPU_MIN=4; GPU_DEF=4
+        ;;
+    --remove)
+        log "Removing perf-tune config"
+        rm -f /etc/sysctl.d/99-perf-vm.conf /etc/sysctl.d/99-perf-net.conf
+        rm -f /etc/udev/rules.d/60-io-scheduler.rules
+        rm -f /etc/systemd/system/perf-tune.service
+        systemctl daemon-reload 2>/dev/null
+        ok "Config removed — reboot to reset to defaults"
+        exit 0
+        ;;
+    *)
+        err "Unknown mode: $MODE  (--max|--balanced|--battery|--status|--remove)"
+        exit 1
+        ;;
+esac
+
+# ─── 1. sysctl.d — VM & Network (native Linux persistence) ────────────────────
+log "VM parameters → /etc/sysctl.d/99-perf-vm.conf"
+mkdir -p /etc/sysctl.d
+cat > /etc/sysctl.d/99-perf-vm.conf << EOF
+# SM8150 VM tuning — generated by perf-tune.sh (mode: ${MODE})
+vm.swappiness = ${SWAPPINESS}
+vm.dirty_ratio = ${DIRTY}
+vm.dirty_background_ratio = ${DIRTY_BG}
+vm.dirty_expire_centisecs = 1000
+vm.dirty_writeback_centisecs = 500
+vm.vfs_cache_pressure = 50
+vm.page-cluster = 0
+EOF
+sysctl -p /etc/sysctl.d/99-perf-vm.conf 2>/dev/null | sed 's/^/  /'
+ok "VM config written + applied"
+
+log "Network buffers → /etc/sysctl.d/99-perf-net.conf"
+cat > /etc/sysctl.d/99-perf-net.conf << 'EOF'
+# SM8150 network tuning — generated by perf-tune.sh
+net.core.rmem_max = 67108864
+net.core.wmem_max = 67108864
+net.core.rmem_default = 4194304
+net.core.wmem_default = 4194304
+net.core.netdev_max_backlog = 16384
+net.ipv4.tcp_rmem = 4096 4194304 67108864
+net.ipv4.tcp_wmem = 4096 4194304 67108864
+net.ipv4.tcp_fastopen = 3
+EOF
+# BBR requires kernel module — try it, fall back to cubic
+if modprobe tcp_bbr 2>/dev/null; then
+    echo "net.ipv4.tcp_congestion_control = bbr" >> /etc/sysctl.d/99-perf-net.conf
+    ok "TCP congestion: BBR"
+else
+    echo "net.ipv4.tcp_congestion_control = cubic" >> /etc/sysctl.d/99-perf-net.conf
+    ok "TCP congestion: cubic (BBR module not available on 4.14-perf+)"
+fi
+sysctl -p /etc/sysctl.d/99-perf-net.conf 2>/dev/null | sed 's/^/  /'
+ok "Network config written + applied"
+
+# ─── 2. udev rule — I/O scheduler (native Linux hardware rule) ────────────────
+log "I/O scheduler → /etc/udev/rules.d/60-io-scheduler.rules"
+mkdir -p /etc/udev/rules.d
+cat > /etc/udev/rules.d/60-io-scheduler.rules << 'EOF'
+# UFS 3.0 I/O scheduler — deadline reduces latency vs cfq default
+# Applies at boot when block devices are registered (udev hotplug)
+ACTION=="add|change", KERNEL=="sd[a-f]", ATTR{queue/scheduler}="deadline"
+ACTION=="add|change", KERNEL=="sd[a-f]", ATTR{queue/read_ahead_kb}="512"
+ACTION=="add|change", KERNEL=="sd[a-f]", ATTR{queue/nr_requests}="256"
+ACTION=="add|change", KERNEL=="sd[a-f]", ATTR{queue/add_random}="0"
+EOF
+# Apply immediately to running devices (udev trigger)
+udevadm trigger --type=devices --action=change --subsystem-match=block 2>/dev/null \
+    && ok "udev rules applied to current block devices" \
+    || warn "udev trigger skipped (may not run in chroot — will apply on next boot)"
+# Also write directly for immediate effect
+for blk in sda sdb sdc sdd sde sdf; do
+    [ -f /sys/block/${blk}/queue/scheduler ] || continue
+    ws "/sys/block/${blk}/queue/scheduler"     "deadline"
+    ws "/sys/block/${blk}/queue/read_ahead_kb" "512"
+    ws "/sys/block/${blk}/queue/nr_requests"   "256"
+    ws "/sys/block/${blk}/queue/add_random"    "0"
+done
+
+# ─── 3. systemd oneshot service — CPU governor + WALT + GPU ───────────────────
+log "Boot service → /etc/systemd/system/perf-tune.service"
+mkdir -p /etc/systemd/system
+cat > /etc/systemd/system/perf-tune.service << EOF
+[Unit]
+Description=SM8150 Performance Tuning (CPU/GPU/WALT)
+After=sysinit.target local-fs.target
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+
+# CPU governors — per cluster
+ExecStart=/bin/sh -c 'for p in 0 4 7; do echo ${CPU_GOV} > /sys/devices/system/cpu/cpufreq/policy\${p}/scaling_governor 2>/dev/null || true; done'
+
+# schedutil rate limit (faster response = better latency)
+ExecStart=/bin/sh -c 'for p in 0 4 7; do echo 500 > /sys/devices/system/cpu/cpufreq/policy\${p}/schedutil/rate_limit_us 2>/dev/null || true; done'
+
+# WALT big.LITTLE migration thresholds
+ExecStart=/bin/sh -c "printf '${SCHED_UP}' > /proc/sys/kernel/sched_upmigrate   2>/dev/null || true"
+ExecStart=/bin/sh -c "printf '${SCHED_DN}' > /proc/sys/kernel/sched_downmigrate 2>/dev/null || true"
+ExecStart=/bin/sh -c 'echo 1 > /proc/sys/kernel/sched_walt_rotate_big_tasks 2>/dev/null || true'
+ExecStart=/bin/sh -c 'echo ${SCHED_BOOST} > /proc/sys/kernel/sched_boost 2>/dev/null || true'
+
+# GPU Adreno 640v2
+ExecStart=/bin/sh -c 'echo ${GPU_GOV} > /sys/class/kgsl/kgsl-3d0/devfreq/governor  2>/dev/null || true'
+ExecStart=/bin/sh -c 'echo ${GPU_MIN}  > /sys/class/kgsl/kgsl-3d0/min_pwrlevel      2>/dev/null || true'
+ExecStart=/bin/sh -c 'echo ${GPU_DEF}  > /sys/class/kgsl/kgsl-3d0/default_pwrlevel  2>/dev/null || true'
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload 2>/dev/null && ok "systemd daemon reloaded"
+systemctl enable perf-tune.service 2>/dev/null \
+    && ok "perf-tune.service enabled (runs on next boot)" \
+    || warn "systemctl enable skipped — may not apply in chroot environment"
+
+# ─── 4. Apply CPU/GPU immediately (sysfs — runtime only) ──────────────────────
+log "Applying CPU governor + WALT now (runtime)"
+for p in 0 4 7; do
+    ws "/sys/devices/system/cpu/cpufreq/policy${p}/scaling_governor" "$CPU_GOV"
+    if [ "$CPU_GOV" = "schedutil" ]; then
+        ws "/sys/devices/system/cpu/cpufreq/policy${p}/schedutil/rate_limit_us" "500"
+    fi
+done
+printf "%s" "$SCHED_UP" > /proc/sys/kernel/sched_upmigrate   2>/dev/null && ok "sched_upmigrate = $SCHED_UP"   || warn "sched_upmigrate: permission denied"
+printf "%s" "$SCHED_DN" > /proc/sys/kernel/sched_downmigrate 2>/dev/null && ok "sched_downmigrate = $SCHED_DN" || warn "sched_downmigrate: permission denied"
+echo "$SCHED_BOOST"      > /proc/sys/kernel/sched_boost       2>/dev/null && ok "sched_boost = $SCHED_BOOST"    || warn "sched_boost: permission denied"
+echo 1                   > /proc/sys/kernel/sched_walt_rotate_big_tasks 2>/dev/null && ok "walt_rotate_big_tasks = 1" || warn "walt_rotate_big_tasks skipped"
+
+log "Applying GPU governor (runtime)"
+GPU="/sys/class/kgsl/kgsl-3d0"
+ws "${GPU}/devfreq/governor"  "$GPU_GOV"
+ws "${GPU}/min_pwrlevel"      "$GPU_MIN"
+ws "${GPU}/default_pwrlevel"  "$GPU_DEF"
+
+echo -e "\n${GREEN}${BOLD}Done — mode: ${MODE}${RESET}"
+echo -e "  Config files:  /etc/sysctl.d/99-perf-{vm,net}.conf"
+echo -e "  udev rules:    /etc/udev/rules.d/60-io-scheduler.rules"
+echo -e "  systemd unit:  /etc/systemd/system/perf-tune.service"
+show_status

@@ -1,0 +1,64 @@
+# ── Secrets & credentials ─────────────────────────────────────────────────────
+.claude.json
+.config/gh/
+.ssh/id_*
+.ssh/known_hosts
+.gnupg/
+
+# ── Large / generated / binary ────────────────────────────────────────────────
+ai/models/
+ai/datasets/
+ai/notebooks/
+.cargo/
+.rustup/
+go/
+.local/share/
+.nvm/
+.cache/
+.oh-my-zsh/
+
+# ── Runtime / state ───────────────────────────────────────────────────────────
+.zsh_history
+.zcompdump*
+.zsh_sessions/
+.bash_history
+.bash_logout
+.bashrc
+.profile
+.lesshst
+.python_history
+.wget-hsts
+.viminfo
+.local/state/
+.local/lib/
+.config/nvim/undo/
+.config/tmux/plugins/
+.config/pulse/
+
+# ── Claude session data ───────────────────────────────────────────────────────
+.claude/projects/
+.claude/todos/
+.claude/statsig/
+.claude/ide/
+
+# ── Backups (actual data, not structure) ─────────────────────────────────────
+backups/configs/
+backups/databases/
+backups/snapshots/
+backups/dotfiles/
+
+# ── Scratch / empty dirs ──────────────────────────────────────────────────────
+workspace/
+projects/
+ai/workflows/
+
+# ── Docker state ─────────────────────────────────────────────────────────────
+.docker/
+
+# ── OS noise ──────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.bak
+*.tmp
+*.swp
+*.swo
