@@ -29,7 +29,7 @@ echo -e "\n${YELLOW}5. Temp files${RESET}"
 find /tmp -maxdepth 1 -mtime +1 -not -name "." -delete 2>/dev/null || true
 
 echo -e "\n${YELLOW}6. Zsh compdump cache${RESET}"
-find /home/ltangen -maxdepth 1 -name ".zcompdump*" -not -newer /home/ltangen/.zshrc -delete 2>/dev/null || true
+find "$HOME" -maxdepth 1 -name ".zcompdump*" -not -newer "$HOME/.zshrc" -delete 2>/dev/null || true
 
 if [ "$1" = "--deep" ]; then
     echo -e "\n${YELLOW}7. Docker cleanup (deep)${RESET}"

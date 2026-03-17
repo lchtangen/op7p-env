@@ -49,7 +49,7 @@
 ```bash
 # On phone (Ubuntu chroot):
 ollama list       # note model names — they survive kernel flash
-ls ~/Projects/    # ensure recent git commits pushed to GitHub
+ls ~/projects/    # ensure recent git commits pushed to GitHub
 
 # Required:
 # - TWRP installed (replaces or alongside OxygenOS recovery)
@@ -74,8 +74,8 @@ adb backup -apk -shared -all -f oneplus7pro-backup-$(date +%Y%m%d).ab
 ### Phase 2 — Download Kernel
 ```bash
 # Download to phone via Ubuntu chroot:
-mkdir -p ~/Recovery/android/kernels
-cd ~/Recovery/android/kernels
+mkdir -p ~/recovery/android/kernels
+cd ~/recovery/android/kernels
 
 # Kirisakura latest release (check GitHub for actual latest URL):
 # wget https://github.com/freak07/Kirisakura_OP7Pro/releases/download/vX.X/Kirisakura_X.X_OP7Pro.zip
@@ -123,7 +123,7 @@ After flashing, custom kernels unlock more tuning options:
 
 ```bash
 # Run performance tuner (now with new schedulers available):
-sudo bash ~/Dev/scripts/linux/perf-tune.sh --balanced
+sudo bash ~/dev/scripts/linux/perf-tune.sh --balanced
 
 # New options available on custom kernels:
 # I/O: mq-deadline, BFQ (better than cfq)

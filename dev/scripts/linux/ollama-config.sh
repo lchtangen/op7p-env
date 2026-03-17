@@ -1,7 +1,7 @@
 #!/bin/bash
 # ollama-config.sh — Optimize Ollama for OnePlus 7 Pro (SM8150, 12GB RAM)
 # Configures CPU affinity, thread count, context size, model preloading
-# Usage: bash ollama-config.sh [--apply|--status|--bench]
+# Usage: bash ollama-config.sh [--apply|--status|--bench|--models|--pull <model>]
 
 set -uo pipefail
 BOLD=$'\033[1m'; CYAN=$'\033[0;36m'; GREEN=$'\033[0;32m'
@@ -10,6 +10,7 @@ YELLOW=$'\033[0;33m'; RESET=$'\033[0m'
 MODE="${1:---status}"
 log()  { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
 ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
+warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
 info() { echo -e "  $1"; }
 
 # SM8150 CPU layout for Ollama affinity
@@ -34,6 +35,46 @@ show_status() {
     info ""
     info "Running processes:"
     pgrep -a ollama 2>/dev/null | head -3 || info "  (not running)"
+}
+
+list_recommended_models() {
+    log "Recommended Models for SM8150 (12GB RAM)"
+    info ""
+    info "  ── Installed (ollama list) ──────────────────"
+    ollama list 2>/dev/null | tail -n +2 | while read -r line; do
+        info "  ✓ $line"
+    done
+    info ""
+    info "  ── Recommended for this device ─────────────"
+    info "  smollm2:135m          270 MB   instant completions, always-on"
+    info "  llama3.2:3b           2.0 GB   general chat, reasoning"
+    info "  qwen2.5-coder:7b      4.7 GB   code (primary) ← best fit"
+    info "  qwen2.5:7b            4.7 GB   multilingual, reasoning"
+    info "  llama3.1:8b           4.7 GB   best general-purpose 8b"
+    info "  phi4:14b              8.5 GB   Microsoft Phi-4 (fits tight)"
+    info "  gemma3:4b             2.5 GB   Google Gemma 3, efficient"
+    info "  gemma3:12b            8.1 GB   Google Gemma 3, max quality"
+    info "  mistral:7b            4.1 GB   fast, good instruction following"
+    info "  codestral:22b         12.9 GB  code specialist (will swap — avoid)"
+    info ""
+    info "  RAM budget: ~7-8GB for models (12GB total, ~4-5GB for OS/services)"
+    info "  Tip: smollm2:135m + qwen2.5-coder:7b covers 95% of dev workflows"
+    info ""
+    info "  Pull with: ollama pull <model>"
+    info "       or:  bash ollama-config.sh --pull <model>"
+}
+
+pull_model() {
+    local model="${2:-}"
+    if [ -z "$model" ]; then
+        warn "Usage: $0 --pull <model>"
+        info "  Example: $0 --pull llama3.1:8b"
+        list_recommended_models
+        exit 1
+    fi
+    log "Pulling model: $model"
+    ollama pull "$model"
+    ok "Pulled: $model"
 }
 
 apply_config() {
@@ -93,31 +134,29 @@ EOF
     info ""
     info "CPU affinity: cores $PERF_CPUS (MID + PRIME) → max Ollama performance"
     info "RAM budget:   ~7GB available for models (12GB total, 5GB OS/services)"
-    info "Recommended model sizes for this device:"
-    info "  smollm2:135m  — instant   (270MB)"
-    info "  llama3.2:3b   — fast      (2.0GB)"
-    info "  qwen2.5-coder:7b — quality (4.7GB) ← best fit for 12GB"
-    info "  llama3.1:8b   — large     (4.7GB) ← also fits"
-    info "  gemma3:12b    — max       (8.1GB) ← tight, may swap"
+    list_recommended_models
 }
 
 bench_model() {
-    log "Benchmarking Ollama inference (smollm2:135m)"
+    local model="${2:-smollm2:135m}"
+    log "Benchmarking Ollama inference ($model)"
     info "Prompt: 'Write a Python hello world function'"
     START=$(date +%s%N)
-    echo "Write a Python hello world function" | ollama run smollm2:135m --nowordwrap 2>/dev/null
+    echo "Write a Python hello world function" | ollama run "$model" --nowordwrap 2>/dev/null
     END=$(date +%s%N)
     ELAPSED=$(( (END - START) / 1000000 ))
     ok "Completed in ${ELAPSED}ms"
 }
 
 case "$MODE" in
-    --status) show_status ;;
-    --apply)  apply_config ;;
-    --bench)  bench_model ;;
+    --status)  show_status ;;
+    --apply)   apply_config ;;
+    --models)  list_recommended_models ;;
+    --pull)    pull_model "$@" ;;
+    --bench)   bench_model "$@" ;;
     *)
         show_status
         echo ""
-        info "Usage: $0 [--status|--apply|--bench]"
+        info "Usage: $0 [--status|--apply|--models|--pull <model>|--bench [model]]"
         ;;
 esac

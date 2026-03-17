@@ -118,6 +118,17 @@ Oh My Zsh + workspace env vars + custom aliases.
 | lazygit | 0.60.0 | `~/.local/bin/lazygit` |
 | Claude Code | latest | `cc` alias |
 
+### AI Stack
+
+| Tool | Notes |
+|------|-------|
+| Ollama 0.18.0 | Local inference server — API at 127.0.0.1:11434 |
+| langchain-ollama | LangChain integration for Ollama |
+| litellm | Unified LLM API (Ollama + Claude + OpenAI) |
+| JupyterLab | Notebooks — `jlab` alias |
+| AI agents | `~/ai/agents/` — chat, review, explain, commit, debug, docs, refactor |
+| ai-stack.sh | `~/dev/scripts/linux/ai-stack.sh` — stack manager |
+
 ---
 
 ## Root Access Workflow
@@ -203,6 +214,9 @@ vncstop     # Stop VNC server
 sysinfo                    # check system state
 perf-status                # check tuning state
 upgrade --check            # check tool versions
+upgrade --all              # upgrade Go, Rust, Node, Python
+upgrade --k8s              # upgrade kubectl, Helm, k9s, Terraform
 bash dev/scripts/linux/cleanup.sh          # free space
 bash dev/scripts/linux/cleanup.sh --deep   # + docker prune + ollama clean
+bash dev/scripts/linux/ai-stack.sh --status   # AI stack status
 ```

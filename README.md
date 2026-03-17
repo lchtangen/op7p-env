@@ -55,6 +55,9 @@
 | `llama3.2:3b` | 2.0 GB | General chat, reasoning |
 | `smollm2:135m` | 270 MB | Fast completions, testing, low-memory |
 
+Additional recommended: `llama3.1:8b`, `qwen2.5:7b`, `gemma3:4b`, `mistral:7b`
+See: `bash ~/dev/scripts/linux/ai-stack.sh --models`
+
 Ollama CPU affinity: cores 4–7 (MID + PRIME clusters, 2.4–2.84 GHz)
 See: `~/.config/ollama/env` | Docs: `~/docs/android/op7p-environment.md`
 
@@ -68,13 +71,19 @@ sysinfo                  # Device snapshot: CPU, RAM, GPU, storage, network
 perf-status              # Kernel tuning status (governors, I/O scheduler, GPU)
 perf-tune --balanced     # Apply performance tuning (requires root via Termux su)
 upgrade --check          # Show all installed tool versions
-upgrade --all            # Upgrade Go, Rust, Python stack
+upgrade --all            # Upgrade Go, Rust, Node, Python stack
+upgrade --k8s            # Upgrade kubectl, Helm, k9s, Terraform
 
 # AI
 ai-chat                  # Ollama interactive chat (qwen2.5-coder:7b default)
 ai-chat fast             # smollm2:135m (instant)
 review <file>            # AI code review via Ollama
 explain <file>           # AI code explanation
+ai-commit                # AI git commit message from staged diff
+ai-debug <error>         # Analyze error/log output
+ai-docs <file>           # Generate documentation
+ai-refactor <file>       # Code refactoring suggestions
+bash ~/dev/scripts/linux/ai-stack.sh --status   # Full AI stack status
 
 # Navigation
 ta                       # tmux attach or create new session
@@ -157,6 +166,8 @@ Full workflow: `~/docs/android/op7p-environment.md`
 | Magisk & root workflow | `~/docs/android/magisk-root.md` |
 | ARM64 toolchain | `~/docs/arm64/README.md` |
 | SampleMind project | `~/docs/samplemind/samplemind-dev-setup.md` |
+| AI agents | `~/ai/agents/README.md` |
+| AI stack management | `~/dev/scripts/linux/ai-stack.sh` |
 
 ---
 
