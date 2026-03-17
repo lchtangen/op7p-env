@@ -89,4 +89,4 @@ ssh -T git@github.com 2>&1 | grep -i "Hi\|authenticated\|denied\|Error" || true
 gh api user --jq '.login' 2>/dev/null && echo -e "${GREEN}GitHub API: connected as $(gh api user --jq '.login')${RESET}" || echo -e "${YELLOW}Run 'gh auth login' manually if needed${RESET}"
 
 echo -e "\n${GREEN}${BOLD}GitHub setup complete!${RESET}"
-echo -e "Clone repos: ${CYAN}gh repo clone $GHUSER/<repo-name> ~/Projects/active/<repo-name>${RESET}"
+echo -e "Clone repos: ${CYAN}gh repo clone $GHUSER/<repo-name> ~/projects/<repo-name>${RESET}"

@@ -10,6 +10,7 @@ YELLOW=$'\033[0;33m'; RESET=$'\033[0m'
 MODE="${1:---status}"
 log()  { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
 ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
+warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
 info() { echo -e "  $1"; }
 
 # SM8150 CPU layout for Ollama affinity

@@ -56,7 +56,7 @@ This file gives Claude Code accurate context about this environment.
 ## Directory Layout (all lowercase)
 
 ```
-~/ai/           agents/ datasets/ models/ notebooks/ prompts/ workflows/
+~/ai/           agents/ models/ prompts/ workflows/ (datasets/ notebooks/)
 ~/dev/          dotfiles/ scripts/{android,linux,windows}/ snippets/ templates/
 ~/docs/         android/ arm64/ linux/ notes/ samplemind/ windows/
 ~/recovery/     android/ bootable/scripts/ linux/ windows/
@@ -98,8 +98,16 @@ su -c "bash /storage/emulated/0/dev/scripts/android/fix-zshrc-aliases.sh"
 | `proj` | `cd ~/projects` |
 | `ta` | tmux attach or new session |
 | `lg` | lazygit |
-| `ai-code` | `ollama run qwen2.5-coder:7b` |
-| `ai-chat` | `ollama run llama3.2:3b` |
+| `ai-code` | `bash $AI_HOME/agents/ai-chat.sh code` (qwen2.5-coder:7b) |
+| `ai-chat` | `bash $AI_HOME/agents/ai-chat.sh` |
+| `ai-commit` | `bash $AI_HOME/agents/ai-commit.sh` |
+| `ai-fix` | `bash $AI_HOME/agents/ai-fix.sh` |
+| `review` | `bash $AI_HOME/agents/ai-review.sh` |
+| `explain` | `bash $AI_HOME/agents/ai-explain.sh` |
+| `env-check` | `bash $DEV/scripts/linux/env-check.sh` |
+| `mcp-setup` | `bash $DEV/scripts/linux/mcp-setup.sh` |
+| `vnc1080` | `bash $DEV/scripts/linux/vnc-desktop.sh start` |
+| `vncstop` | `bash $DEV/scripts/linux/vnc-desktop.sh stop` |
 
 ---
 
@@ -127,4 +135,7 @@ No root needed:
 ```bash
 gh auth login
 gh repo clone lchtangen/samplemind-ai ~/projects/samplemind-ai
+bash ~/dev/scripts/linux/mcp-setup.sh --install    # MCP servers for Claude
+ollama pull nomic-embed-text                        # embeddings model for RAG
+ollama pull llama3.1:8b                             # better general reasoning
 ```

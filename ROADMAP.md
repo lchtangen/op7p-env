@@ -101,7 +101,7 @@ Guide: `~/docs/android/kernel-custom.md`
 
 ---
 
-## Phase 5 — AI & Development Platform 📋
+## Phase 5 — AI & Development Platform 🔄
 
 | Item | Status | Notes |
 |------|--------|-------|
@@ -111,10 +111,15 @@ Guide: `~/docs/android/kernel-custom.md`
 | Hugging Face hub | ✅ | |
 | JupyterLab | ✅ | Installed, not configured for persistent launch |
 | Claude Code (claude CLI) | ✅ | `cc` alias |
+| MCP setup script | ✅ | `dev/scripts/linux/mcp-setup.sh --install` |
+| AI system prompts library | ✅ | `ai/prompts/` — 7 specialist prompts |
+| AI commit / AI fix agents | ✅ | `ai-commit`, `ai-fix` aliases |
+| Model reference docs | ✅ | `ai/models/README.md` |
+| Workflow patterns | ✅ | `ai/workflows/README.md` |
 | SampleMind AI engine | 📋 | Hermes + OpenVINO (ARM64 build needed) |
 | SampleMind frontend (Next.js + Tauri) | 📋 | Repo clone + build |
 | OpenVINO ARM64 build | 📋 | Intel OpenVINO for ARM — experimental |
-| Additional Ollama models | ⏳ | `ollama pull llama3.1:8b` (4.7GB) |
+| Additional Ollama models | ⏳ | `ollama pull llama3.1:8b` (4.7GB), `nomic-embed-text` (274MB) |
 
 ---
 
@@ -143,7 +148,26 @@ Guide: `~/docs/android/kernel-custom.md`
 
 ---
 
-## Pending Actions — Immediate
+## Phase 8 — AI Orchestration & MCP 📋
+
+| Item | Status | Notes |
+|------|--------|-------|
+| System prompt library (`ai/prompts/*.md`) | ✅ | 7 specialist prompts: code-reviewer, linux-admin, go-developer, rust-developer, android-kernel, devops-engineer, ai-engineer |
+| AI commit agent (`ai-commit.sh`) | ✅ | Conventional Commits format, confirm before commit |
+| AI code fixer (`ai-fix.sh`) | ✅ | Outputs unified diff, optional --apply |
+| Model reference (`ai/models/README.md`) | ✅ | Benchmarks, RAM budget, Modelfile examples |
+| Workflow patterns (`ai/workflows/README.md`) | ✅ | RAG, multi-step pipelines, consensus review |
+| MCP server setup (`mcp-setup.sh`) | ✅ | filesystem, git, sqlite, fetch servers |
+| MCP servers installed (npm) | ⏳ | Run: `bash dev/scripts/linux/mcp-setup.sh --install` |
+| Claude Code with MCP enabled | ⏳ | After mcp-setup: `cc` for full-context Claude |
+| `nomic-embed-text` model | ⏳ | `ollama pull nomic-embed-text` — enables RAG |
+| LangChain RAG pipeline | 📋 | Use `ai/workflows/README.md` template |
+| Additional Ollama models | ⏳ | `ollama pull llama3.1:8b` (4.7GB) |
+| Local agent with tool use | 📋 | Python LangChain agent + bash/file/git tools |
+
+---
+
+
 
 Execute in order from **Termux** with Magisk root:
 

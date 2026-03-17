@@ -69,12 +69,17 @@ perf-status              # Kernel tuning status (governors, I/O scheduler, GPU)
 perf-tune --balanced     # Apply performance tuning (requires root via Termux su)
 upgrade --check          # Show all installed tool versions
 upgrade --all            # Upgrade Go, Rust, Python stack
+env-check                # Validate full dev environment (tools, services, AI, paths)
 
-# AI
+# AI — local Ollama inference
 ai-chat                  # Ollama interactive chat (qwen2.5-coder:7b default)
 ai-chat fast             # smollm2:135m (instant)
+ai-chat --system "$(cat ~/ai/prompts/go-developer.md)"  # with specialist prompt
 review <file>            # AI code review via Ollama
 explain <file>           # AI code explanation
+ai-commit                # AI-powered git commit message (staged diff)
+ai-fix <file>            # AI code fixer — shows unified diff of suggested fixes
+ai-fix <file> --apply    # AI code fixer — apply fixes directly
 
 # Navigation
 ta                       # tmux attach or create new session
@@ -92,6 +97,10 @@ esys                     # edit /etc/zsh/zshrc.local (root)
 # VNC desktop
 vnc1080                  # Start XFCE4 at 1080p on :1 (port 5901)
 vncstop                  # Stop VNC server
+
+# MCP / Claude tools
+mcp-setup --install      # Install MCP servers (filesystem, git, sqlite, fetch)
+mcp-setup --status       # Check MCP configuration
 
 # Recovery
 bootable                 # Create Ventoy bootable USB
@@ -156,6 +165,10 @@ Full workflow: `~/docs/android/op7p-environment.md`
 | Custom kernel guide | `~/docs/android/kernel-custom.md` |
 | Magisk & root workflow | `~/docs/android/magisk-root.md` |
 | ARM64 toolchain | `~/docs/arm64/README.md` |
+| AI models reference | `~/ai/models/README.md` |
+| AI agents index | `~/ai/agents/README.md` |
+| AI prompt library | `~/ai/prompts/README.md` |
+| AI workflow patterns | `~/ai/workflows/README.md` |
 | SampleMind project | `~/docs/samplemind/samplemind-dev-setup.md` |
 
 ---

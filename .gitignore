@@ -6,7 +6,9 @@
 .gnupg/
 
 # ── Large / generated / binary ────────────────────────────────────────────────
-ai/models/
+ai/models/*
+!ai/models/README.md
+!ai/models/modelfiles/
 ai/datasets/
 ai/notebooks/
 .cargo/
@@ -50,7 +52,8 @@ backups/dotfiles/
 # ── Scratch / empty dirs ──────────────────────────────────────────────────────
 workspace/
 projects/
-ai/workflows/
+ai/workflows/*
+!ai/workflows/README.md
 
 # ── Docker state ─────────────────────────────────────────────────────────────
 .docker/
